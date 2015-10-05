@@ -1,4 +1,4 @@
-package org.gislers.playground.esb.gateway;
+package org.gislers.playground.esb.gateway.config;
 
 /**
  * Created by:   jgisle

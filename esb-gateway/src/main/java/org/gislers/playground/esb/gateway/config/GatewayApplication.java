@@ -1,4 +1,4 @@
-package org.gislers.playground.esb.gateway;
+package org.gislers.playground.esb.gateway.config;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

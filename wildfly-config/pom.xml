@@ -34,8 +34,21 @@
                                         <entries>!!["java:/jms/esb/queue/InboundProductQueue"]</entries>
                                     </properties>
                                 </resource>
+                                <resource>
+                                    <address>subsystem=messaging-activemq,server=default,jms-topic=OutboundV3ProductTopic</address>
+                                    <properties>
+                                        <durable>true</durable>
+                                        <entries>!!["java:/jms/esb/topic/OutboundV3ProductTopic"]</entries>
+                                    </properties>
+                                </resource>
+                                <resource>
+                                    <address>subsystem=messaging-activemq,server=default,jms-topic=OutboundV4ProductTopic</address>
+                                    <properties>
+                                        <durable>true</durable>
+                                        <entries>!!["java:/jms/esb/topic/OutboundV4ProductTopic"]</entries>
+                                    </properties>
+                                </resource>
                             </resources>
-
                         </configuration>
                     </execution>
 

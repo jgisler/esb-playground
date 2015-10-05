@@ -1,6 +1,6 @@
 package org.gislers.playground.esb.gateway.services;
 
-import org.gislers.playground.esb.gateway.Constants;
+import org.gislers.playground.esb.gateway.config.Constants;
 import org.gislers.playground.esb.gateway.dto.ProductDto;
 
 import javax.inject.Named;
