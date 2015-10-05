@@ -28,7 +28,7 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <address>subsystem=messaging,server=default,jms-queue=InboundProductQueue</address>
+                                    <address>subsystem=messaging-activemq,server=default,jms-queue=InboundProductQueue</address>
                                     <properties>
                                         <durable>true</durable>
                                         <entries>!!["java:/jms/esb/queue/InboundProductQueue"]</entries>
@@ -43,4 +43,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

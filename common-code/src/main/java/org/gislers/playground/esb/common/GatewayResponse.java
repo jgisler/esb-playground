@@ -3,7 +3,6 @@ package org.gislers.playground.esb.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by jim
@@ -11,18 +10,19 @@ import java.util.UUID;
  */
 public class GatewayResponse implements Serializable {
 
-    private UUID transactionId;
+    private String txId;
     private List<ErrorItem> errorItems = new ArrayList<>();
 
     public GatewayResponse() {
     }
 
-    public UUID getTransactionId() {
-        return transactionId;
+    public String getTxId() {
+        return txId;
     }
 
-    public void setTransactionId(UUID transactionId) {
-        this.transactionId = transactionId;
+    public GatewayResponse setTxId(String txId) {
+        this.txId = txId;
+        return this;
     }
 
     public List<ErrorItem> getErrorItems() {
