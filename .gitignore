@@ -1,3 +1,8 @@
+/wildfly-config/wildfly-config.iml
+/common-code/common-code.iml
+/esb-playground.iml
+/esb-gateway/esb-gateway.iml
+/.idea
 *.class
 
 # Mobile Tools for Java (J2ME)
