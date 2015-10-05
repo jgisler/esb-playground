@@ -14,6 +14,7 @@
         <module>common-code</module>
         <module>esb-gateway</module>
         <module>wildfly-config</module>
+        <module>some-product-consumer</module>
     </modules>
 
     <name>ESB Solutions</name>

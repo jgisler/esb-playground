@@ -27,7 +27,7 @@ public class GatewayService {
     @Resource
     private ConnectionFactory connectionFactory;
 
-    @Resource(name = "java:/jms/esb/queue/InboundProductQueue")
+    @Resource(lookup="java:/jms/esb/queue/InboundProductQueue")
     private Queue inboundProductQueue;
 
     public void sendProduct( final ProductDto productDto ) throws JMSException {
