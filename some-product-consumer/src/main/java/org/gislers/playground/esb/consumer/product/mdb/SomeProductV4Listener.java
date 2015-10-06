@@ -1,7 +1,6 @@
 package org.gislers.playground.esb.consumer.product.mdb;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -21,7 +20,7 @@ import javax.jms.TextMessage;
         @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
 public class SomeProductV4Listener implements MessageListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(SomeProductV4Listener.class);
+    private static final Logger logger = Logger.getLogger( SomeProductV4Listener.class );
 
     @Override
     public void onMessage(Message message) {

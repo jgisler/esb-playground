@@ -1,8 +1,7 @@
 package org.gislers.playground.esb.gateway.services;
 
 import org.gislers.playground.esb.gateway.dto.ProductDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.logging.Logger;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -22,7 +21,7 @@ import javax.jms.TextMessage;
 @Named
 public class GatewayService {
 
-    private static final Logger logger = LoggerFactory.getLogger(GatewayService.class);
+    private static final Logger logger = Logger.getLogger(GatewayService.class);
 
     @Resource
     private ConnectionFactory connectionFactory;

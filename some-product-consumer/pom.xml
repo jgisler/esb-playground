@@ -46,15 +46,10 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
 
-        <!-- Logging with SLF4J & LogBack -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Import the CDI API, we use provided scope as the API is included in JBoss WildFly -->
