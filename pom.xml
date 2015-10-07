@@ -11,13 +11,13 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>common-code</module>
-        <module>esb-gateway</module>
         <module>wildfly-config</module>
+        <module>esb-common-code</module>
         <module>some-product-consumer</module>
+        <module>esb-gateway</module>
     </modules>
 
-    <name>ESB Solutions</name>
+    <name>esb-playground</name>
     <description>Java EE project</description>
 
     <scm>
@@ -31,12 +31,6 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <!--Spring-->
-        <springframework.version>4.2.1.RELEASE</springframework.version>
-
-        <!--Hibernate / JPA-->
-        <hibernate.version>5.0.0.Final</hibernate.version>
 
         <!--Jackson-->
         <jackson.version>2.6.2</jackson.version>
@@ -90,7 +84,7 @@
 
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
-                <artifactId>common-code</artifactId>
+                <artifactId>esb-common-code</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
 
@@ -117,7 +111,7 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-parent</artifactId>
-                <version>2.15.2</version>
+                <version>2.15.3</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
