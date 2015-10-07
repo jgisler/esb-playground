@@ -26,7 +26,46 @@
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <executions>
 
-                    <!--JMS Queues/Topic-->
+                    <!-- Deploy the JDBC library -->
+                    <execution>
+                        <id>deploy-driver</id>
+                        <goals>
+                            <goal>deploy-artifact</goal>
+                        </goals>
+                        <phase>install</phase>
+                        <configuration>
+                            <groupId>mysql</groupId>
+                            <artifactId>mysql-connector-java</artifactId>
+                        </configuration>
+                    </execution>
+
+                    <!-- Add a data source -->
+                    <execution>
+                        <id>add-datasource</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <address>subsystem=datasources,data-source=ChinookDS</address>
+                            <resources>
+                                <resource>
+                                    <properties>
+                                        <connection-url>jdbc:mysql://localhost:3306/chinook</connection-url>
+                                        <jndi-name>java:/comp/env/jdbc/ChinookDS</jndi-name>
+                                        <enabled>true</enabled>
+                                        <enable>true</enable>
+                                        <user-name>chinook_user</user-name>
+                                        <password>chinook_user</password>
+                                        <driver-name>mysql-connector-java-5.1.36.jar_com.mysql.jdbc.Driver_5_1</driver-name>
+                                        <use-ccm>false</use-ccm>
+                                    </properties>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <!--JMS Queues/Topics-->
                     <execution>
                         <id>add-jms-queue</id>
                         <phase>install</phase>
@@ -59,10 +98,16 @@
                             </resources>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
