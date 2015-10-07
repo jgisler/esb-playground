@@ -2,12 +2,20 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>esb-playground</artifactId>
         <groupId>org.gislers.playgrounds.esb</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <jms.subsystem.name>messaging</jms.subsystem.name>
+        <jms.server.name>hornetq-server</jms.server.name>
+        <jms.instance.name>default</jms.instance.name>
+    </properties>
 
     <artifactId>wildfly-config</artifactId>
 
@@ -28,24 +36,24 @@
                         <configuration>
                             <resources>
                                 <resource>
-                                    <address>subsystem=messaging-activemq,server=default,jms-queue=InboundProductQueue</address>
+                                    <address>subsystem=${jms.subsystem.name},${jms.server.name}=${jms.instance.name},jms-queue=InboundProductQueue</address>
                                     <properties>
                                         <durable>true</durable>
-                                        <entries>!!["java:/jms/esb/queue/InboundProductQueue"]</entries>
+                                        <entries>!!["java:/jms/queue/InboundProductQueue"]</entries>
                                     </properties>
                                 </resource>
                                 <resource>
-                                    <address>subsystem=messaging-activemq,server=default,jms-topic=OutboundV3ProductTopic</address>
+                                    <address>subsystem=${jms.subsystem.name},${jms.server.name}=${jms.instance.name},jms-topic=OutboundV3ProductTopic</address>
                                     <properties>
                                         <durable>true</durable>
-                                        <entries>!!["java:/jms/esb/topic/OutboundV3ProductTopic"]</entries>
+                                        <entries>!!["java:/jms/topic/OutboundV3ProductTopic"]</entries>
                                     </properties>
                                 </resource>
                                 <resource>
-                                    <address>subsystem=messaging-activemq,server=default,jms-topic=OutboundV4ProductTopic</address>
+                                    <address>subsystem=${jms.subsystem.name},${jms.server.name}=${jms.instance.name},jms-topic=OutboundV4ProductTopic</address>
                                     <properties>
                                         <durable>true</durable>
-                                        <entries>!!["java:/jms/esb/topic/OutboundV4ProductTopic"]</entries>
+                                        <entries>!!["java:/jms/topic/OutboundV4ProductTopic"]</entries>
                                     </properties>
                                 </resource>
                             </resources>
