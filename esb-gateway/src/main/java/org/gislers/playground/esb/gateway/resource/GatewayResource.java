@@ -2,9 +2,10 @@ package org.gislers.playground.esb.gateway.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.gislers.playground.esb.common.ErrorItem;
-import org.gislers.playground.esb.common.GatewayResponse;
-import org.gislers.playground.esb.common.Product;
+import org.gislers.playground.esb.common.http.ErrorItem;
+import org.gislers.playground.esb.common.http.GatewayResponse;
+import org.gislers.playground.esb.common.model.Product;
+import org.gislers.playground.esb.common.properties.MessageProperties;
 import org.gislers.playground.esb.gateway.dto.ProductDto;
 import org.gislers.playground.esb.gateway.services.GatewayService;
 import org.gislers.playground.esb.gateway.services.SerializationService;
@@ -43,7 +44,9 @@ public class GatewayResource {
     @Path("/product")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response sendProduct(@HeaderParam("envName") String envName, @HeaderParam("messageVersion") String messageVersion, Product product) {
+    public Response sendProduct( @HeaderParam(MessageProperties.ENV_NAME) String envName,
+                                 @HeaderParam(MessageProperties.MESSAGE_VERSION) String messageVersion,
+                                 Product product) {
 
         UUID txId = UUID.randomUUID();
 

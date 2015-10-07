@@ -24,11 +24,25 @@
                 <version>2.6</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <archive>
+                        <manifestEntries>
+                            <Dependencies>org.slf4j</Dependencies>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>deploy-war</id>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                        <phase>install</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -37,7 +51,7 @@
 
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
-            <artifactId>common-code</artifactId>
+            <artifactId>esb-common-code</artifactId>
         </dependency>
 
         <dependency>
@@ -61,8 +75,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-camel</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jms</artifactId>
         </dependency>
 
         <dependency>

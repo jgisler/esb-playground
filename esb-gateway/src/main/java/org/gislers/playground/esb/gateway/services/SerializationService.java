@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.gislers.playground.esb.common.Product;
+import org.gislers.playground.esb.common.model.Product;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Named;

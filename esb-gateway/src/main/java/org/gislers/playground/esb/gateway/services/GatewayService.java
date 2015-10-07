@@ -1,5 +1,6 @@
 package org.gislers.playground.esb.gateway.services;
 
+import org.gislers.playground.esb.common.properties.MessageProperties;
 import org.gislers.playground.esb.gateway.dto.ProductDto;
 import org.jboss.logging.Logger;
 
@@ -21,12 +22,12 @@ import javax.jms.TextMessage;
 @Named
 public class GatewayService {
 
-    private static final Logger logger = Logger.getLogger(GatewayService.class);
+    private Logger logger = Logger.getLogger( this.getClass() );
 
-    @Resource
+    @Resource(lookup="java:jboss/DefaultJMSConnectionFactory")
     private ConnectionFactory connectionFactory;
 
-    @Resource(lookup="java:/jms/esb/queue/InboundProductQueue")
+    @Resource(lookup="java:/jms/queue/InboundProductQueue")
     private Queue inboundProductQueue;
 
     public void sendProduct( final ProductDto productDto ) throws JMSException {
@@ -44,9 +45,9 @@ public class GatewayService {
             messageProducer.setDeliveryMode(DeliveryMode.PERSISTENT);
 
             TextMessage textMessage = session.createTextMessage(productDto.getPayload());
-            textMessage.setStringProperty("TRANSACTION_ID", productDto.getTxId());
-            textMessage.setStringProperty("ENV_NAME", productDto.getEnvironmentName());
-            textMessage.setStringProperty("MESSAGE_VERSION", productDto.getMessageVersion());
+            textMessage.setStringProperty(MessageProperties.ENV_NAME, productDto.getEnvironmentName());
+            textMessage.setStringProperty(MessageProperties.TRANSACTION_ID, productDto.getTxId());
+            textMessage.setStringProperty(MessageProperties.MESSAGE_VERSION, productDto.getMessageVersion());
 
             messageProducer.send(textMessage);
             logger.info(String.format("Sent message; txId: '%s'", productDto.getTxId()));

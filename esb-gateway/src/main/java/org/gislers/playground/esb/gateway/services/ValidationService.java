@@ -1,6 +1,6 @@
 package org.gislers.playground.esb.gateway.services;
 
-import org.gislers.playground.esb.gateway.config.Constants;
+import org.gislers.playground.esb.common.properties.MessageProperties;
 import org.gislers.playground.esb.gateway.dto.ProductDto;
 
 import javax.inject.Named;
@@ -21,11 +21,11 @@ public class ValidationService {
         List<String> errors = new ArrayList<>();
 
         if( isBlank(productDto.getEnvironmentName()) ) {
-            errors.add( String.format("Validation Error: Missing header for '%s'", Constants.ENV_NAME) );
+            errors.add( String.format("Validation Error: Missing header for '%s'", MessageProperties.ENV_NAME) );
         }
 
         if( isBlank(productDto.getMessageVersion()) ) {
-            errors.add( String.format("Validation Error: Missing header for '%s'", Constants.MESSAGE_VERSION) );
+            errors.add( String.format("Validation Error: Missing header for '%s'", MessageProperties.MESSAGE_VERSION) );
         }
 
         if( isBlank(productDto.getPayload())) {
