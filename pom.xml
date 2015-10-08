@@ -15,6 +15,8 @@
         <module>esb-common-code</module>
         <module>some-product-consumer</module>
         <module>esb-gateway</module>
+        <module>esb-endpoint-service</module>
+        <module>esb-database</module>
     </modules>
 
     <name>esb-playground</name>
@@ -75,6 +77,13 @@
                         <password>${wildfly.admin.password}</password>
                     </configuration>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sql-maven-plugin</artifactId>
+                    <version>1.5</version>
+                </plugin>
+
             </plugins>
         </pluginManagement>
     </build>
@@ -113,6 +122,13 @@
                 <version>${jackson.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.juddi</groupId>
+                <artifactId>juddiv3-war</artifactId>
+                <version>3.3.1</version>
+                <type>war</type>
+            </dependency>
+
             <!--Camel-->
             <dependency>
                 <groupId>org.apache.camel</groupId>
@@ -147,62 +163,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <profiles>
-        <profile>
-            <id>Wildfly Datasource Config</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        <version>${wildfly.maven.plugin.version}</version>
-                        <executions>
-
-                            <!-- Deploy the JDBC library -->
-                            <execution>
-                                <id>deploy-driver</id>
-                                <phase>install</phase>
-                                <configuration>
-                                    <groupId>mysql</groupId>
-                                    <artifactId>mysql-connector-java</artifactId>
-                                </configuration>
-                                <goals>
-                                    <goal>deploy-artifact</goal>
-                                </goals>
-                            </execution>
-
-                            <!-- Add a data source -->
-                            <execution>
-                                <id>add-datasource</id>
-                                <phase>install</phase>
-                                <configuration>
-                                    <address>subsystem=datasources,data-source=ChinookDS</address>
-                                    <resources>
-                                        <resource>
-                                            <properties>
-                                                <connection-url>jdbc:mysql://localhost:3306/chinook</connection-url>
-                                                <jndi-headerName>java:/comp/env/jdbc/ChinookDS</jndi-headerName>
-                                                <enabled>true</enabled>
-                                                <enable>true</enable>
-                                                <user-headerName>chinook_user</user-headerName>
-                                                <password>chinook_user</password>
-                                                <driver-headerName>
-                                                    mysql-connector-java-5.1.36.jar_com.mysql.jdbc.Driver_5_1
-                                                </driver-headerName>
-                                                <use-ccm>false</use-ccm>
-                                            </properties>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                                <goals>
-                                    <goal>add-resource</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

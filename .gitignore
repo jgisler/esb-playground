@@ -1,3 +1,5 @@
+/esb-database/esb-database.iml
+/esb-endpoint-service/esb-endpoint-service.iml
 /esb-common-code/esb-common-code.iml
 /some-product-consumer/some-product-consumer.iml
 /wildfly-config/wildfly-config.iml
