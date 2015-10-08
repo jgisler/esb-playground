@@ -15,7 +15,7 @@
         <module>esb-common-code</module>
         <module>some-product-consumer</module>
         <module>esb-gateway</module>
-        <module>esb-endpoint-service</module>
+        <module>esb-service</module>
         <module>esb-database</module>
     </modules>
 
@@ -73,6 +73,7 @@
                     <artifactId>wildfly-maven-plugin</artifactId>
                     <version>${wildfly.maven.plugin.version}</version>
                     <configuration>
+                        <skip>true</skip>
                         <username>${wildfly.admin.username}</username>
                         <password>${wildfly.admin.password}</password>
                     </configuration>
