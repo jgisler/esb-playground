@@ -47,16 +47,16 @@
                             <goal>add-resource</goal>
                         </goals>
                         <configuration>
-                            <address>subsystem=datasources,data-source=ChinookDS</address>
+                            <address>subsystem=datasources,data-source=EsbDS</address>
                             <resources>
                                 <resource>
                                     <properties>
-                                        <connection-url>jdbc:mysql://localhost:3306/chinook</connection-url>
-                                        <jndi-name>java:/comp/env/jdbc/ChinookDS</jndi-name>
+                                        <connection-url>jdbc:mysql://localhost:3306/esbdb</connection-url>
+                                        <jndi-name>java:/comp/env/jdbc/EsbDS</jndi-name>
                                         <enabled>true</enabled>
                                         <enable>true</enable>
-                                        <user-name>chinook_user</user-name>
-                                        <password>chinook_user</password>
+                                        <user-name>esb_user</user-name>
+                                        <password>esb_user</password>
                                         <driver-name>mysql-connector-java-5.1.36.jar_com.mysql.jdbc.Driver_5_1</driver-name>
                                         <use-ccm>false</use-ccm>
                                     </properties>
