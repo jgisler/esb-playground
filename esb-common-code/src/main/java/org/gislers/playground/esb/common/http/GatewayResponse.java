@@ -1,6 +1,6 @@
 package org.gislers.playground.esb.common.http;
 
-import java.io.Serializable;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +8,8 @@ import java.util.List;
  * Created by jim
  * Created on 10/4/15.
  */
-public class GatewayResponse implements Serializable {
+@XmlRootElement
+public class GatewayResponse {
 
     private String txId;
     private List<ErrorItem> errorItems = new ArrayList<>();
