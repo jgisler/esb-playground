@@ -11,16 +11,14 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>wildfly-config</module>
-        <module>esb-common-code</module>
-        <module>some-product-consumer</module>
+        <module>esb-common</module>
+        <module>esb-services</module>
         <module>esb-gateway</module>
-        <module>esb-service</module>
-        <module>esb-database</module>
+        <module>esb-consumers</module>
     </modules>
 
     <name>esb-playground</name>
-    <description>Java EE project</description>
+    <description>Replicating ESB functionality as a JEE application</description>
 
     <scm>
         <connection>scm:git:git@github.com:jgisler/esb-playground.git</connection>
@@ -29,43 +27,95 @@
     </scm>
 
     <properties>
-        <java.version>1.7</java.version>
-
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!--Jackson-->
-        <jackson.version>2.6.2</jackson.version>
-
-        <version.jboss.spec.javaee.7.0>1.0.3.Final</version.jboss.spec.javaee.7.0>
+        <!--Plugin versions-->
+        <maven.compiler.plugin.version>3.3</maven.compiler.plugin.version>
+        <maven.ear.plugin.version>2.10.1</maven.ear.plugin.version>
+        <maven.war.plugin.version>2.6</maven.war.plugin.version>
+        <maven.ejb.plugin.version>2.5.1</maven.ejb.plugin.version>
+        <maven.dependency.plugin.version>2.10</maven.dependency.plugin.version>
+        <maven.surefire.plugin.version>2.18.1</maven.surefire.plugin.version>
         <wildfly.maven.plugin.version>1.0.2.Final</wildfly.maven.plugin.version>
+
+        <!--Dependency versions-->
+        <camel.parent.version>2.16.0</camel.parent.version>
+        <java-ee.api.version>7.0</java-ee.api.version>
+        <junit.version>4.12</junit.version>
+        <jackson.version>2.6.2</jackson.version>
+        <commons.lang3.version>3.4</commons.lang3.version>
+
+        <!--EJB spec version-->
+        <ejb.spec.version>3.2</ejb.spec.version>
 
     </properties>
 
     <build>
-        <finalName>esb-gateway</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
-        </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.3</version>
+                    <version>${maven.compiler.plugin.version}</version>
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-ejb-plugin</artifactId>
+                    <version>${maven.ejb.plugin.version}</version>
+                    <configuration>
+                        <ejbVersion>${ejb.spec.version}</ejbVersion>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven.war.plugin.version}</version>
+                    <configuration>
+                        <failOnMissingWebXml>false</failOnMissingWebXml>
+                        <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+                        <archive>
+                            <manifest>
+                                <addClasspath>true</addClasspath>
+                                <classpathPrefix>lib/</classpathPrefix>
+                            </manifest>
+                        </archive>
+                        <webResources>
+                            <resource>
+                                <filtering>true</filtering>
+                                <directory>src/main/webapp</directory>
+                                <includes>
+                                    <include>**/web.xml</include>
+                                </includes>
+                            </resource>
+                        </webResources>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-ear-plugin</artifactId>
+                    <version>${maven.ear.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.10</version>
+                    <version>${maven.dependency.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
                 </plugin>
 
                 <plugin>
@@ -78,13 +128,6 @@
                         <password>${wildfly.admin.password}</password>
                     </configuration>
                 </plugin>
-
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>sql-maven-plugin</artifactId>
-                    <version>1.5</version>
-                </plugin>
-
             </plugins>
         </pluginManagement>
     </build>
@@ -94,20 +137,8 @@
 
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
-                <artifactId>esb-common-code</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>5.1.36</version>
+                <artifactId>esb-common</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
             <!--Jackson JSON-->
@@ -124,50 +155,35 @@
             </dependency>
 
             <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-jackson-provider</artifactId>
-                <version>3.0.13.Final</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.juddi</groupId>
-                <artifactId>juddiv3-war</artifactId>
-                <version>3.3.1</version>
-                <type>war</type>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
             </dependency>
 
             <!--Camel-->
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-parent</artifactId>
-                <version>2.15.3</version>
+                <version>${camel.parent.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
 
+            <!--JEE API-->
             <dependency>
-                <groupId>org.wildfly.bom</groupId>
-                <artifactId>jboss-javaee-7.0-wildfly-with-hibernate3</artifactId>
-                <version>9.0.1.Final</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>${java-ee.api.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-jms-client-bom</artifactId>
-                <version>9.0.1.Final</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- Test -->
+            <!--Test dependencies-->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.12</version>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>
