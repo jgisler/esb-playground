@@ -15,13 +15,9 @@
     <artifactId>esb-consumers</artifactId>
     <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>${java-ee.api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>esb-consumers-mdb</module>
+        <module>esb-consumers-ear</module>
+    </modules>
 
 </project>
