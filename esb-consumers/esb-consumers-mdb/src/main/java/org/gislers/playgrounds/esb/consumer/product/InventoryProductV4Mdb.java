@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  * Created date: 10/15/15
  */
 @MessageDriven(name = "InventoryProductV4Mdb", activationConfig = {
-        @ActivationConfigProperty(propertyName = "destinationLookup"        , propertyValue = "java:/jms/topic/OutboundV3ProductTopic"),
+        @ActivationConfigProperty(propertyName = "destinationLookup"        , propertyValue = "java:/jms/topic/OutboundV4ProductTopic"),
         @ActivationConfigProperty(propertyName = "destinationType"          , propertyValue = "javax.jms.Topic"),
         @ActivationConfigProperty(propertyName = "acknowledgeMode"          , propertyValue = "Auto-acknowledge"),
         @ActivationConfigProperty(propertyName = "subscriptionName"         , propertyValue = "InventoryProductV4Mdb"),

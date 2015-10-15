@@ -53,7 +53,7 @@
                         </goals>
                         <phase>clean</phase>
                         <configuration>
-                            <filename>${project.parent.artifactId}.${packaging}</filename>
+                            <filename>${project.parent.artifactId}.${project.packaging}</filename>
                         </configuration>
                     </execution>
 
@@ -64,7 +64,7 @@
                         </goals>
                         <phase>install</phase>
                         <configuration>
-                            <filename>${project.parent.artifactId}.${packaging}</filename>
+                            <filename>${project.parent.artifactId}.${project.packaging}</filename>
                         </configuration>
                     </execution>
 
