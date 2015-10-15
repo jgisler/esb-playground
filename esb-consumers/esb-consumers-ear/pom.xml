@@ -86,6 +86,12 @@
             <type>ejb</type>
         </dependency>
 
+        <dependency>
+            <groupId>org.gislers.playgrounds.esb</groupId>
+            <artifactId>esb-dispatch-service</artifactId>
+            <type>ejb</type>
+        </dependency>
+
         <!--Camel message routing-->
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -6,46 +6,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>esb-consumers</artifactId>
+        <artifactId>esb-services</artifactId>
         <groupId>org.gislers.playgrounds.esb</groupId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>esb-consumers-mdb</artifactId>
+    <artifactId>esb-dispatch-service</artifactId>
     <packaging>ejb</packaging>
 
     <dependencies>
-
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
             <artifactId>esb-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.gislers.playgrounds.esb</groupId>
-            <artifactId>esb-dispatch-service</artifactId>
-            <type>ejb</type>
-            <scope>provided</scope>
-        </dependency>
-
-        <!--Camel message routing-->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jms</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cdi</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -55,13 +28,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--JEE API-->
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
+            <version>${java-ee.api.version}</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
-
-
 </project>

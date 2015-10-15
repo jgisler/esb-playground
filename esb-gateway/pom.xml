@@ -26,15 +26,15 @@
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
                 <artifactId>esb-publish-service</artifactId>
-                <version>${project.version}</version>
                 <type>ejb</type>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
                 <artifactId>esb-gateway-web</artifactId>
-                <version>${project.version}</version>
                 <type>war</type>
+                <version>${project.version}</version>
             </dependency>
 
         </dependencies>

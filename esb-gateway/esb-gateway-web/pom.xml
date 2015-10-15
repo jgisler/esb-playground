@@ -36,8 +36,8 @@
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
             <artifactId>esb-publish-service</artifactId>
-            <scope>provided</scope>
             <type>ejb</type>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

@@ -1,5 +1,6 @@
 package org.gislers.playgrounds.esb.consumer.product;
 
+import org.gislers.playgrounds.esb.common.message.ServiceName;
 import org.gislers.playgrounds.esb.consumer.AbstractEsbMdb;
 
 /**
@@ -8,5 +9,8 @@ import org.gislers.playgrounds.esb.consumer.AbstractEsbMdb;
  */
 public abstract class AbstractProductMdb extends AbstractEsbMdb {
 
-
+    @Override
+    protected ServiceName getServiceName() {
+        return ServiceName.PRODUCT;
+    }
 }

@@ -20,4 +20,37 @@
         <module>esb-consumers-ear</module>
     </modules>
 
+    <properties>
+        <camel.parent.version>2.16.0</camel.parent.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>org.gislers.playgrounds.esb</groupId>
+                <artifactId>esb-dispatch-service</artifactId>
+                <version>${project.parent.version}</version>
+                <type>ejb</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gislers.playgrounds.esb</groupId>
+                <artifactId>esb-consumers-mdb</artifactId>
+                <version>${project.parent.version}</version>
+                <type>ejb</type>
+            </dependency>
+
+            <!--Camel-->
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-parent</artifactId>
+                <version>${camel.parent.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
 </project>

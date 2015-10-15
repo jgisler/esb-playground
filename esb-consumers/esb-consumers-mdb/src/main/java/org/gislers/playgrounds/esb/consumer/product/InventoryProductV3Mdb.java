@@ -1,5 +1,7 @@
 package org.gislers.playgrounds.esb.consumer.product;
 
+import org.gislers.playgrounds.esb.common.message.ClientName;
+
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import java.util.logging.Logger;
@@ -20,5 +22,10 @@ public class InventoryProductV3Mdb extends AbstractProductMdb {
     @Override
     protected Logger getLogger() {
         return Logger.getLogger(this.getClass().getSimpleName());
+    }
+
+    @Override
+    protected ClientName getConsumerName() {
+        return ClientName.INVENTORY;
     }
 }

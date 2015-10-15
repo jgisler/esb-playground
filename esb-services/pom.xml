@@ -17,6 +17,7 @@
 
     <modules>
         <module>esb-publish-service</module>
+        <module>esb-dispatch-service</module>
     </modules>
 
 </project>

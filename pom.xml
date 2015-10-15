@@ -15,6 +15,7 @@
         <module>esb-services</module>
         <module>esb-gateway</module>
         <module>esb-consumers</module>
+        <module>client-endpoints</module>
     </modules>
 
     <name>esb-playground</name>
@@ -41,7 +42,6 @@
         <wildfly.maven.plugin.version>1.0.2.Final</wildfly.maven.plugin.version>
 
         <!--Dependency versions-->
-        <camel.parent.version>2.16.0</camel.parent.version>
         <java-ee.api.version>7.0</java-ee.api.version>
         <junit.version>4.12</junit.version>
         <jackson.version>2.6.2</jackson.version>
@@ -158,15 +158,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons.lang3.version}</version>
-            </dependency>
-
-            <!--Camel-->
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-parent</artifactId>
-                <version>${camel.parent.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
             </dependency>
 
             <!--JEE API-->
