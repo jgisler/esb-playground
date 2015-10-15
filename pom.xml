@@ -16,6 +16,7 @@
         <module>esb-gateway</module>
         <module>esb-consumers</module>
         <module>client-endpoints</module>
+        <module>test-message-generator</module>
     </modules>
 
     <name>esb-playground</name>
