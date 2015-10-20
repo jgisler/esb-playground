@@ -1,13 +1,12 @@
 package org.gislers.playgrounds.esb.test.client.model;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  * Created by jim
  * Created on 9/27/15.
  */
-public class ProductInfo implements Serializable {
+public class ProductInfo {
 
     long id;
     String name;

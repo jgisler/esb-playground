@@ -6,6 +6,7 @@ package org.gislers.playgrounds.esb.common.message;
  */
 public class MessageConstants {
 
+    public static final String TIMESTAMP = "TS";
     public static final String TRANSACTION_ID = "txId";
     public static final String ENV_NAME = "envName";
     public static final String MESSAGE_VERSION = "messageVersion";

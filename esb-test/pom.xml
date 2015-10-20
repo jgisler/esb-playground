@@ -16,7 +16,6 @@
 
     <modules>
         <module>esb-test-clients</module>
-        <module>esb-test-publishers</module>
     </modules>
 
 </project>

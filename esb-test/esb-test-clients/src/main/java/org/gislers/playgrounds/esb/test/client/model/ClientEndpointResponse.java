@@ -1,9 +1,12 @@
 package org.gislers.playgrounds.esb.test.client.model;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Created by:   jgisle
  * Created date: 10/15/15
  */
+@XmlRootElement
 public class ClientEndpointResponse {
 
     private String txId;

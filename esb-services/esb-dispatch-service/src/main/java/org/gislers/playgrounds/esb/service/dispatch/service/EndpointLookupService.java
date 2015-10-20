@@ -3,16 +3,18 @@ package org.gislers.playgrounds.esb.service.dispatch.service;
 import org.gislers.playgrounds.esb.service.dispatch.dto.DispatchServiceDto;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 /**
  * Created by:   jgisle
  * Created date: 10/15/15
  */
 @Named
+@Singleton
 public class EndpointLookupService {
 
     public String findEndpoint( DispatchServiceDto dispatchServiceDto ) {
-        StringBuilder sb = new StringBuilder( "http://localhost:8080/client-endpoints/" )
+        StringBuilder sb = new StringBuilder( "http://localhost:8080/esb-test-clients/api/" )
                 .append(dispatchServiceDto.getClientName().name().toLowerCase()).append("/")
                 .append(dispatchServiceDto.getServiceName().name().toLowerCase()).append("/");
 

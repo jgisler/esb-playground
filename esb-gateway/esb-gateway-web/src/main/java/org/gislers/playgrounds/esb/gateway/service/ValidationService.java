@@ -4,6 +4,7 @@ import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.service.publish.dto.ProductInfoDto;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * Created date: 10/13/15
  */
 @Named
+@Singleton
 public class ValidationService {
 
     public List<String> validate(ProductInfoDto productDto) {

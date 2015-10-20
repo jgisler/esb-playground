@@ -57,15 +57,16 @@ public class ProductResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response publishProduct( @HeaderParam(MessageConstants.ENV_NAME) String envName,
-                                    @HeaderParam(MessageConstants.MESSAGE_VERSION) String messageVersion,
+    public Response publishProduct( @HeaderParam(MessageConstants.TIMESTAMP)        long timestamp,
+                                    @HeaderParam(MessageConstants.ENV_NAME)         String envName,
+                                    @HeaderParam(MessageConstants.MESSAGE_VERSION)  String messageVersion,
                                     ProductInfo productInfo ) {
 
         UUID txId = UUID.randomUUID();
 
         Response response;
         try {
-            ProductInfoDto productDto = buildProductDto( txId, envName, messageVersion, productInfo );
+            ProductInfoDto productDto = buildProductDto( txId, envName, messageVersion, timestamp, productInfo );
 
             List<String> errors = validationService.validate(productDto);
             if( !errors.isEmpty() ) {
@@ -85,13 +86,14 @@ public class ProductResource {
         return response;
     }
 
-    ProductInfoDto buildProductDto( UUID txId, String envName, String messageVersion, ProductInfo product ) throws JsonProcessingException {
+    ProductInfoDto buildProductDto( UUID txId, String envName, String messageVersion, long timestamp, ProductInfo product ) throws JsonProcessingException {
         String payload = serializationService.toJson(product);
 
         ProductInfoDto productDto = new ProductInfoDto();
         productDto.setTxId( txId.toString() );
         productDto.setEnvironmentName( envName );
         productDto.setMessageVersion( messageVersion );
+        productDto.setTimestamp(timestamp);
         productDto.setPayload(payload);
         return productDto;
     }

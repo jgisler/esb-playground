@@ -1,4 +1,4 @@
-package org.gislers.playgrounds.esb.common.http;
+package org.gislers.playgrounds.esb.test.client.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;

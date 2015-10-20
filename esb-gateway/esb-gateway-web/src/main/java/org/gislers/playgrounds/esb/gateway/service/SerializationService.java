@@ -8,12 +8,14 @@ import org.gislers.playgrounds.esb.common.model.ProductInfo;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 /**
  * Created by:   jgisle
  * Created date: 10/5/15
  */
 @Named
+@Singleton
 public class SerializationService {
 
     private ObjectMapper objectMapper;

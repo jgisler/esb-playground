@@ -9,6 +9,7 @@ public class ProductInfoDto {
     private String txId;
     private String environmentName;
     private String messageVersion;
+    private long   timestamp;
     private String payload;
 
     public ProductInfoDto() {
@@ -36,6 +37,14 @@ public class ProductInfoDto {
 
     public void setMessageVersion(String messageVersion) {
         this.messageVersion = messageVersion;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getPayload() {

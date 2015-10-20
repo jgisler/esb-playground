@@ -1,13 +1,14 @@
 package org.gislers.playgrounds.esb.common.model;
 
-import java.io.Serializable;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 
 /**
  * Created by jim
  * Created on 9/27/15.
  */
-public class ProductInfo implements Serializable {
+@XmlRootElement
+public class ProductInfo {
 
     long id;
     String name;

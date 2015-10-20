@@ -4,7 +4,6 @@ import org.gislers.playgrounds.esb.common.http.Header;
 import org.gislers.playgrounds.esb.service.dispatch.DispatchService;
 import org.gislers.playgrounds.esb.service.dispatch.dto.DispatchServiceDto;
 import org.gislers.playgrounds.esb.service.dispatch.exception.DispatchServiceException;
-import org.gislers.playgrounds.esb.service.dispatch.model.ClientEndpointResponse;
 import org.gislers.playgrounds.esb.service.dispatch.service.EndpointLookupService;
 
 import javax.ejb.Stateless;
@@ -34,23 +33,26 @@ public class DispatchServiceBean implements DispatchService {
     }
 
     @Override
-    public void dispatchMessage(DispatchServiceDto dto) throws DispatchServiceException {
+    public void dispatchMessage(DispatchServiceDto dto) {
         String endpoint = endpointLookupService.findEndpoint(dto);
         if( isBlank(endpoint) ) {
+            logger.warning( "Endpoint not found: " + dto.toString() );
             throw new DispatchServiceException("Endpoint not configured: " + dto.toString());
         }
         else {
-            ClientEndpointResponse response = sendMessage(endpoint, dto.getTxId(), dto.getPayload());
-            logger.info( "Response: " + response.toString() );
+            Response response = sendMessage(endpoint, dto.getTxId(), dto.getTimestamp(), dto.getPayload());
+            if( !isSuccess(response) ) {
+                logger.info(dto.getPayload() + " - " + response.toString());
+            }
         }
     }
 
-    ClientEndpointResponse sendMessage( String endpoint, String txId, String payload ) {
+    Response sendMessage( String endpoint, String txId, long timestamp, String payload ) {
         return ClientBuilder.newClient()
                 .target(endpoint)
                 .request()
                 .header(Header.ESB_TX_ID.name(), txId)
-                .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE), ClientEndpointResponse.class);
+                .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE), Response.class);
     }
 
     boolean isSuccess( Response response ) {

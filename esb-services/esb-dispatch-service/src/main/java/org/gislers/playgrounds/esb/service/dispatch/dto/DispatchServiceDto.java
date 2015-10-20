@@ -14,6 +14,7 @@ public class DispatchServiceDto {
     private String environmentName;
     private String messageVersion;
     private String txId;
+    private long timestamp;
     private String payload;
 
     public DispatchServiceDto() {
@@ -59,6 +60,14 @@ public class DispatchServiceDto {
         this.txId = txId;
     }
 
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public String getPayload() {
         return payload;
     }
@@ -75,6 +84,7 @@ public class DispatchServiceDto {
         sb.append(", environmentName='").append(environmentName).append('\'');
         sb.append(", messageVersion='").append(messageVersion).append('\'');
         sb.append(", txId='").append(txId).append('\'');
+        sb.append(", timestamp=").append(timestamp);
         sb.append(", payload='").append(payload).append('\'');
         sb.append('}');
         return sb.toString();
