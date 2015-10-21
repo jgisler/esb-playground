@@ -4,6 +4,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.gislers.playgrounds.esb.common.message.ClientName;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.message.ServiceName;
+import org.gislers.playgrounds.esb.consumer.exception.EsbConsumerException;
 import org.gislers.playgrounds.esb.service.dispatch.DispatchService;
 import org.gislers.playgrounds.esb.service.dispatch.dto.DispatchServiceDto;
 
@@ -20,17 +21,12 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractEsbMdb implements MessageListener {
 
-    protected DispatchService dispatchService;
+    protected abstract Logger       getLogger();
+    protected abstract ServiceName  getServiceName();
+    protected abstract ClientName   getConsumerName();
 
     @EJB
-    public void setDispatchService(DispatchService dispatchService) {
-        this.dispatchService = dispatchService;
-    }
-
-    protected abstract Logger getLogger();
-
-    protected abstract ServiceName getServiceName();
-    protected abstract ClientName getConsumerName();
+    protected DispatchService dispatchService;
 
     @Override
     public void onMessage(Message message) {
@@ -54,6 +50,7 @@ public abstract class AbstractEsbMdb implements MessageListener {
         }
         catch (JMSException e) {
             getLogger().warning(ExceptionUtils.getRootCauseMessage(e));
+            throw new EsbConsumerException(e);
         }
     }
 }
