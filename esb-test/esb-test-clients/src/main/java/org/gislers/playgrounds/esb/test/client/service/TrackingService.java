@@ -45,7 +45,6 @@ public class TrackingService {
                 snooze();
             }
             long recTimestamp = receiveMap.get(txId);
-
             statsMap.put(txId, (recTimestamp-sentTimestamp) + "ms");
         }
         return statsMap;

@@ -41,7 +41,7 @@ public class DispatchServiceBean implements DispatchService {
         }
         else {
             Response response = sendMessage(endpoint, dto.getTxId(), dto.getTimestamp(), dto.getPayload());
-            if( !isSuccess(response) ) {
+            if (!isSuccess(response)) {
                 logger.info(dto.getPayload() + " - " + response.toString());
             }
         }
