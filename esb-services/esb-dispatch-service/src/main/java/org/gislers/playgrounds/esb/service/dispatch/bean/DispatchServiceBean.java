@@ -1,6 +1,6 @@
 package org.gislers.playgrounds.esb.service.dispatch.bean;
 
-import org.gislers.playgrounds.esb.common.http.Header;
+import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.service.dispatch.DispatchService;
 import org.gislers.playgrounds.esb.service.dispatch.dto.DispatchServiceDto;
 import org.gislers.playgrounds.esb.service.dispatch.exception.DispatchServiceException;
@@ -23,36 +23,33 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Stateless
 public class DispatchServiceBean implements DispatchService {
 
-    private Logger logger = Logger.getLogger( getClass().getSimpleName() );
-
-    private EndpointLookupService endpointLookupService;
+    private static final Logger logger = Logger.getLogger(DispatchServiceBean.class.getSimpleName());
 
     @Inject
-    public void setEndpointLookupService(EndpointLookupService endpointLookupService) {
-        this.endpointLookupService = endpointLookupService;
-    }
+    private EndpointLookupService endpointLookupService;
 
     @Override
-    public void dispatchMessage(DispatchServiceDto dto) {
-        String endpoint = endpointLookupService.findEndpoint(dto);
+    public void dispatchMessage(DispatchServiceDto dispatchServiceDto) {
+        String endpoint = endpointLookupService.findEndpoint(dispatchServiceDto);
         if( isBlank(endpoint) ) {
-            logger.warning( "Endpoint not found: " + dto.toString() );
-            throw new DispatchServiceException("Endpoint not configured: " + dto.toString());
+            logger.warning("Endpoint not found: " + dispatchServiceDto.toString());
+            throw new DispatchServiceException("Endpoint not configured: " + dispatchServiceDto.toString());
         }
         else {
-            Response response = sendMessage(endpoint, dto.getTxId(), dto.getTimestamp(), dto.getPayload());
+            Response response = sendMessage(endpoint, dispatchServiceDto);
             if (!isSuccess(response)) {
-                logger.info(dto.getPayload() + " - " + response.toString());
+                logger.info(dispatchServiceDto.getPayload() + " - " + response.toString());
             }
         }
     }
 
-    Response sendMessage( String endpoint, String txId, long timestamp, String payload ) {
+    Response sendMessage(String endpoint, DispatchServiceDto dispatchServiceDto) {
         return ClientBuilder.newClient()
                 .target(endpoint)
                 .request()
-                .header(Header.ESB_TX_ID.name(), txId)
-                .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE), Response.class);
+                .header(MessageConstants.TIMESTAMP, dispatchServiceDto.getTimestamp())
+                .header(MessageConstants.TRANSACTION_ID, dispatchServiceDto.getTxId())
+                .post(Entity.entity(dispatchServiceDto.getPayload(), MediaType.APPLICATION_JSON_TYPE), Response.class);
     }
 
     boolean isSuccess( Response response ) {
