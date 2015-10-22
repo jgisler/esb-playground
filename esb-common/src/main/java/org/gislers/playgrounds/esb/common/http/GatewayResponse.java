@@ -12,6 +12,7 @@ import java.util.List;
 public class GatewayResponse {
 
     private String txId;
+    private long gatewayTimestamp;
     private List<ErrorItem> errorItems = new ArrayList<>();
 
     public GatewayResponse() {
@@ -21,9 +22,16 @@ public class GatewayResponse {
         return txId;
     }
 
-    public GatewayResponse setTxId(String txId) {
+    public void setTxId(String txId) {
         this.txId = txId;
-        return this;
+    }
+
+    public long getGatewayTimestamp() {
+        return gatewayTimestamp;
+    }
+
+    public void setGatewayTimestamp(long gatewayTimestamp) {
+        this.gatewayTimestamp = gatewayTimestamp;
     }
 
     public List<ErrorItem> getErrorItems() {
@@ -38,6 +46,7 @@ public class GatewayResponse {
     public String toString() {
         final StringBuilder sb = new StringBuilder("GatewayResponse{");
         sb.append("txId='").append(txId).append('\'');
+        sb.append(", gatewayTimestamp=").append(gatewayTimestamp);
         sb.append(", errorItems=").append(errorItems);
         sb.append('}');
         return sb.toString();

@@ -74,7 +74,7 @@ public class ProductResource {
 
             List<String> errors = validationService.validate(productDto);
             if( !errors.isEmpty() ) {
-                response = buildErrorResponse( txId, errors, Response.Status.BAD_REQUEST );
+                response = buildErrorResponse(txId, timestamp, errors, Response.Status.BAD_REQUEST);
             }
             else {
                 publishService.publish(productDto);
@@ -82,10 +82,10 @@ public class ProductResource {
             }
         }
         catch( JsonProcessingException e ) {
-            response = buildErrorResponse( txId, e, Response.Status.BAD_REQUEST );
+            response = buildErrorResponse(txId, timestamp, e, Response.Status.BAD_REQUEST);
         }
         catch( PublishException e ) {
-            response = buildErrorResponse( txId, e, Response.Status.INTERNAL_SERVER_ERROR );
+            response = buildErrorResponse(txId, timestamp, e, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -93,19 +93,21 @@ public class ProductResource {
     Response buildSuccessResponse( ProductInfoDto productDto ) {
         GatewayResponse gatewayResponse = new GatewayResponse();
         gatewayResponse.setTxId(productDto.getTxId());
+        gatewayResponse.setGatewayTimestamp(Long.getLong(productDto.getTimestamp()));
         return Response.accepted(gatewayResponse)
                 .build();
     }
 
-    Response buildErrorResponse( String txId, Throwable throwable, Response.Status status ) {
+    Response buildErrorResponse(String txId, String gatewayTimestamp, Throwable throwable, Response.Status status) {
         List<String> errors = new ArrayList<>();
         errors.add( ExceptionUtils.getRootCauseMessage(throwable) );
-        return buildErrorResponse(txId, errors, status);
+        return buildErrorResponse(txId, gatewayTimestamp, errors, status);
     }
 
-    Response buildErrorResponse( String txId, List<String> errors, Response.Status status ) {
+    Response buildErrorResponse(String txId, String gatewayTimestamp, List<String> errors, Response.Status status) {
         GatewayResponse response = new GatewayResponse();
         response.setTxId( txId );
+        response.setGatewayTimestamp(Long.getLong(gatewayTimestamp));
         for( String error : errors ) {
             response.getErrorItems().add( new ErrorItem(UUID.randomUUID(), error) );
         }

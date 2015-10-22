@@ -35,6 +35,18 @@ public class ProductInfoDto {
         return payload;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ProductInfoDto{");
+        sb.append("txId='").append(txId).append('\'');
+        sb.append(", environmentName='").append(environmentName).append('\'');
+        sb.append(", messageVersion='").append(messageVersion).append('\'');
+        sb.append(", timestamp='").append(timestamp).append('\'');
+        sb.append(", payload='").append(payload).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+
     public static class Builder {
 
         private String txId;

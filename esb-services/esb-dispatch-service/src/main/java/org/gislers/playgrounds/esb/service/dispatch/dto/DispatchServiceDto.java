@@ -71,6 +71,9 @@ public class DispatchServiceDto {
         private String timestamp;
         private String payload;
 
+        public Builder() {
+        }
+
         public Builder serviceName(ServiceName serviceName) {
             this.serviceName = serviceName;
             return this;
