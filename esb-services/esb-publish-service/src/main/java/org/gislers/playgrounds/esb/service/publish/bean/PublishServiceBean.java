@@ -48,10 +48,10 @@ public class PublishServiceBean implements PublishService {
             messageProducer.setDeliveryMode(DeliveryMode.PERSISTENT);
 
             TextMessage textMessage = session.createTextMessage(productDto.getPayload());
-            textMessage.setLongProperty( MessageConstants.TIMESTAMP, productDto.getTimestamp() );
-            textMessage.setStringProperty(MessageConstants.ENV_NAME, productDto.getEnvironmentName());
-            textMessage.setStringProperty(MessageConstants.TRANSACTION_ID, productDto.getTxId());
-            textMessage.setStringProperty(MessageConstants.MESSAGE_VERSION, productDto.getMessageVersion());
+            textMessage.setStringProperty(MessageConstants.TIMESTAMP        , productDto.getTimestamp() );
+            textMessage.setStringProperty(MessageConstants.TRANSACTION_ID   , productDto.getTxId());
+            textMessage.setStringProperty(MessageConstants.ENV_NAME         , productDto.getEnvironmentName());
+            textMessage.setStringProperty(MessageConstants.MESSAGE_VERSION  , productDto.getMessageVersion());
 
             messageProducer.send(textMessage);
         }
