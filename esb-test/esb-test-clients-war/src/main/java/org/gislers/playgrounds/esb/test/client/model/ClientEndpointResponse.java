@@ -9,25 +9,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ClientEndpointResponse {
 
-    private String txId;
     private String service;
     private String client;
+    private String txId;
+    private String gatewayTimestamp;
 
     public ClientEndpointResponse() {
-    }
-
-    public ClientEndpointResponse(String txId, String service, String client) {
-        this.txId = txId;
-        this.service = service;
-        this.client = client;
-    }
-
-    public String getTxId() {
-        return txId;
-    }
-
-    public void setTxId(String txId) {
-        this.txId = txId;
     }
 
     public String getService() {
@@ -44,5 +31,21 @@ public class ClientEndpointResponse {
 
     public void setClient(String client) {
         this.client = client;
+    }
+
+    public String getTxId() {
+        return txId;
+    }
+
+    public void setTxId(String txId) {
+        this.txId = txId;
+    }
+
+    public String getGatewayTimestamp() {
+        return gatewayTimestamp;
+    }
+
+    public void setGatewayTimestamp(String gatewayTimestamp) {
+        this.gatewayTimestamp = gatewayTimestamp;
     }
 }

@@ -93,7 +93,7 @@ public class ProductResource {
     Response buildSuccessResponse( ProductInfoDto productDto ) {
         GatewayResponse gatewayResponse = new GatewayResponse();
         gatewayResponse.setTxId(productDto.getTxId());
-        gatewayResponse.setGatewayTimestamp(Long.getLong(productDto.getTimestamp()));
+        gatewayResponse.setGatewayTimestamp(Long.parseLong(productDto.getTimestamp()));
         return Response.accepted(gatewayResponse)
                 .build();
     }
@@ -107,7 +107,7 @@ public class ProductResource {
     Response buildErrorResponse(String txId, String gatewayTimestamp, List<String> errors, Response.Status status) {
         GatewayResponse response = new GatewayResponse();
         response.setTxId( txId );
-        response.setGatewayTimestamp(Long.getLong(gatewayTimestamp));
+        response.setGatewayTimestamp(Long.parseLong(gatewayTimestamp));
         for( String error : errors ) {
             response.getErrorItems().add( new ErrorItem(UUID.randomUUID(), error) );
         }

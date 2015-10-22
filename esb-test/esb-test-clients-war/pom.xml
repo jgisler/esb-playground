@@ -11,7 +11,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>esb-test-clients</artifactId>
+    <artifactId>esb-test-clients-war</artifactId>
     <packaging>war</packaging>
 
     <build>
@@ -21,30 +21,16 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
             </plugin>
-
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>deploy-war</id>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                        <phase>install</phase>
-                        <configuration>
-                            <filename>${project.artifactId}.${project.packaging}</filename>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.gislers.playgrounds.esb</groupId>
+            <artifactId>esb-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>javax</groupId>
