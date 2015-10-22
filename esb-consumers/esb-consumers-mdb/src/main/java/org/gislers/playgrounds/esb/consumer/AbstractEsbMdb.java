@@ -30,23 +30,18 @@ public abstract class AbstractEsbMdb implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
-
         TextMessage textMessage = (TextMessage) message;
         try {
-            String txId = textMessage.getStringProperty(MessageConstants.TRANSACTION_ID);
-            String envName = textMessage.getStringProperty(MessageConstants.ENV_NAME);
-            String messageVersion = textMessage.getStringProperty(MessageConstants.MESSAGE_VERSION);
-            String payload = textMessage.getText();
-
-            DispatchServiceDto dispatchServiceDto = new DispatchServiceDto();
-            dispatchServiceDto.setServiceName( getServiceName() );
-            dispatchServiceDto.setClientName( getConsumerName() );
-            dispatchServiceDto.setMessageVersion( messageVersion );
-            dispatchServiceDto.setEnvironmentName( envName );
-            dispatchServiceDto.setTxId( txId );
-            dispatchServiceDto.setPayload( payload );
-
-            dispatchService.dispatchMessage( dispatchServiceDto );
+            dispatchService.dispatchMessage( new DispatchServiceDto.Builder()
+                    .serviceName(getServiceName())
+                    .clientName(getConsumerName())
+                    .environmentName(textMessage.getStringProperty(MessageConstants.ENV_NAME))
+                    .messageVersion(textMessage.getStringProperty(MessageConstants.MESSAGE_VERSION))
+                    .txId(textMessage.getStringProperty(MessageConstants.TRANSACTION_ID))
+                    .timestamp(textMessage.getStringProperty(MessageConstants.TIMESTAMP))
+                    .payload(textMessage.getText())
+                    .build()
+            );
         }
         catch (JMSException e) {
             getLogger().warning(ExceptionUtils.getRootCauseMessage(e));

@@ -14,66 +14,38 @@ public class DispatchServiceDto {
     private String environmentName;
     private String messageVersion;
     private String txId;
-    private long timestamp;
+    private String timestamp;
     private String payload;
 
-    public DispatchServiceDto() {
+    private DispatchServiceDto() {
     }
 
     public ServiceName getServiceName() {
         return serviceName;
     }
 
-    public void setServiceName(ServiceName serviceName) {
-        this.serviceName = serviceName;
-    }
-
     public ClientName getClientName() {
         return clientName;
-    }
-
-    public void setClientName(ClientName clientName) {
-        this.clientName = clientName;
     }
 
     public String getEnvironmentName() {
         return environmentName;
     }
 
-    public void setEnvironmentName(String environmentName) {
-        this.environmentName = environmentName;
-    }
-
     public String getMessageVersion() {
         return messageVersion;
-    }
-
-    public void setMessageVersion(String messageVersion) {
-        this.messageVersion = messageVersion;
     }
 
     public String getTxId() {
         return txId;
     }
 
-    public void setTxId(String txId) {
-        this.txId = txId;
-    }
-
-    public long getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
     }
 
     public String getPayload() {
         return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
     }
 
     @Override
@@ -88,5 +60,62 @@ public class DispatchServiceDto {
         sb.append(", payload='").append(payload).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public static class Builder {
+        private ServiceName serviceName;
+        private ClientName clientName;
+        private String environmentName;
+        private String messageVersion;
+        private String txId;
+        private String timestamp;
+        private String payload;
+
+        public Builder serviceName(ServiceName serviceName) {
+            this.serviceName = serviceName;
+            return this;
+        }
+
+        public Builder clientName(ClientName clientName) {
+            this.clientName = clientName;
+            return this;
+        }
+
+        public Builder environmentName(String environmentName) {
+            this.environmentName = environmentName;
+            return this;
+        }
+
+        public Builder messageVersion(String messageVersion) {
+            this.messageVersion = messageVersion;
+            return this;
+        }
+
+        public Builder txId(String txId) {
+            this.txId = txId;
+            return this;
+        }
+
+        public Builder timestamp(String timestamp) {
+            this.timestamp = timestamp;
+            return this;
+        }
+
+        public Builder payload(String payload) {
+            this.payload = payload;
+            return this;
+        }
+
+        public DispatchServiceDto build() {
+            DispatchServiceDto dispatchServiceDto = new DispatchServiceDto();
+            dispatchServiceDto.clientName = this.clientName;
+            dispatchServiceDto.environmentName = this.environmentName;
+            dispatchServiceDto.messageVersion = this.messageVersion;
+            dispatchServiceDto.payload = this.payload;
+            dispatchServiceDto.serviceName = this.serviceName;
+            dispatchServiceDto.timestamp = this.timestamp;
+            dispatchServiceDto.txId = this.txId;
+            return dispatchServiceDto;
+        }
     }
 }
