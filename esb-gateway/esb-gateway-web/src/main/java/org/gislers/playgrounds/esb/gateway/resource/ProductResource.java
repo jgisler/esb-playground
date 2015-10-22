@@ -57,16 +57,20 @@ public class ProductResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response publishProduct( @HeaderParam(MessageConstants.TIMESTAMP)        long timestamp,
+    public Response publishProduct( @HeaderParam(MessageConstants.TIMESTAMP)        String timestamp,
+                                    @HeaderParam(MessageConstants.TRANSACTION_ID)   String txId,
                                     @HeaderParam(MessageConstants.ENV_NAME)         String envName,
                                     @HeaderParam(MessageConstants.MESSAGE_VERSION)  String messageVersion,
                                     ProductInfo productInfo ) {
-
-        UUID txId = UUID.randomUUID();
-
         Response response;
         try {
-            ProductInfoDto productDto = buildProductDto( txId, envName, messageVersion, timestamp, productInfo );
+            ProductInfoDto productDto = new ProductInfoDto.Builder()
+                    .environmentName(envName)
+                    .messageVersion(messageVersion)
+                    .txId(txId)
+                    .timestamp(timestamp)
+                    .payload(serializationService.toJson(productInfo))
+                    .build();
 
             List<String> errors = validationService.validate(productDto);
             if( !errors.isEmpty() ) {
@@ -86,18 +90,6 @@ public class ProductResource {
         return response;
     }
 
-    ProductInfoDto buildProductDto( UUID txId, String envName, String messageVersion, long timestamp, ProductInfo product ) throws JsonProcessingException {
-        String payload = serializationService.toJson(product);
-
-        ProductInfoDto productDto = new ProductInfoDto();
-        productDto.setTxId( txId.toString() );
-        productDto.setEnvironmentName( envName );
-        productDto.setMessageVersion( messageVersion );
-        productDto.setTimestamp(timestamp);
-        productDto.setPayload(payload);
-        return productDto;
-    }
-
     Response buildSuccessResponse( ProductInfoDto productDto ) {
         GatewayResponse gatewayResponse = new GatewayResponse();
         gatewayResponse.setTxId(productDto.getTxId());
@@ -105,15 +97,15 @@ public class ProductResource {
                 .build();
     }
 
-    Response buildErrorResponse( UUID txId, Throwable throwable, Response.Status status ) {
+    Response buildErrorResponse( String txId, Throwable throwable, Response.Status status ) {
         List<String> errors = new ArrayList<>();
         errors.add( ExceptionUtils.getRootCauseMessage(throwable) );
         return buildErrorResponse(txId, errors, status);
     }
 
-    Response buildErrorResponse( UUID txId, List<String> errors, Response.Status status ) {
+    Response buildErrorResponse( String txId, List<String> errors, Response.Status status ) {
         GatewayResponse response = new GatewayResponse();
-        response.setTxId( txId.toString() );
+        response.setTxId( txId );
         for( String error : errors ) {
             response.getErrorItems().add( new ErrorItem(UUID.randomUUID(), error) );
         }
