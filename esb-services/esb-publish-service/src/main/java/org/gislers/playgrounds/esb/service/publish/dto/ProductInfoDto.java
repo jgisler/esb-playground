@@ -6,6 +6,7 @@ package org.gislers.playgrounds.esb.service.publish.dto;
  */
 public class ProductInfoDto {
 
+    private String batchId;
     private String txId;
     private String environmentName;
     private String messageVersion;
@@ -13,6 +14,10 @@ public class ProductInfoDto {
     private String payload;
 
     private ProductInfoDto() {
+    }
+
+    public String getBatchId() {
+        return batchId;
     }
 
     public String getTxId() {
@@ -38,7 +43,8 @@ public class ProductInfoDto {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ProductInfoDto{");
-        sb.append("txId='").append(txId).append('\'');
+        sb.append("batchId='").append(batchId).append('\'');
+        sb.append(", txId='").append(txId).append('\'');
         sb.append(", environmentName='").append(environmentName).append('\'');
         sb.append(", messageVersion='").append(messageVersion).append('\'');
         sb.append(", timestamp='").append(timestamp).append('\'');
@@ -49,6 +55,7 @@ public class ProductInfoDto {
 
     public static class Builder {
 
+        private String batchId;
         private String txId;
         private String environmentName;
         private String messageVersion;
@@ -56,6 +63,11 @@ public class ProductInfoDto {
         private String payload;
 
         public Builder() {
+        }
+
+        public Builder batchId(String batchId) {
+            this.batchId = batchId;
+            return this;
         }
 
         public Builder txId(String txId) {
@@ -85,6 +97,7 @@ public class ProductInfoDto {
 
         public ProductInfoDto build() {
             ProductInfoDto productInfoDto = new ProductInfoDto();
+            productInfoDto.batchId = this.batchId;
             productInfoDto.environmentName = this.environmentName;
             productInfoDto.messageVersion = this.messageVersion;
             productInfoDto.timestamp = this.timestamp;

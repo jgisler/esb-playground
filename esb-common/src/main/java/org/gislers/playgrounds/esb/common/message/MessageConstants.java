@@ -10,5 +10,5 @@ public class MessageConstants {
     public static final String TRANSACTION_ID = "txId";
     public static final String ENV_NAME = "envName";
     public static final String MESSAGE_VERSION = "messageVersion";
-
+    public static final String BATCH_ID = "batchId";
 }

@@ -13,6 +13,7 @@ public class DispatchServiceDto {
     private ClientName clientName;
     private String environmentName;
     private String messageVersion;
+    private String batchId;
     private String txId;
     private String timestamp;
     private String payload;
@@ -36,6 +37,10 @@ public class DispatchServiceDto {
         return messageVersion;
     }
 
+    public String getBatchId() {
+        return batchId;
+    }
+
     public String getTxId() {
         return txId;
     }
@@ -55,8 +60,9 @@ public class DispatchServiceDto {
         sb.append(", clientName=").append(clientName);
         sb.append(", environmentName='").append(environmentName).append('\'');
         sb.append(", messageVersion='").append(messageVersion).append('\'');
+        sb.append(", batchId='").append(batchId).append('\'');
         sb.append(", txId='").append(txId).append('\'');
-        sb.append(", timestamp=").append(timestamp);
+        sb.append(", timestamp='").append(timestamp).append('\'');
         sb.append(", payload='").append(payload).append('\'');
         sb.append('}');
         return sb.toString();
@@ -67,6 +73,7 @@ public class DispatchServiceDto {
         private ClientName clientName;
         private String environmentName;
         private String messageVersion;
+        private String batchId;
         private String txId;
         private String timestamp;
         private String payload;
@@ -99,6 +106,11 @@ public class DispatchServiceDto {
             return this;
         }
 
+        public Builder batchId(String batchId) {
+            this.batchId = batchId;
+            return this;
+        }
+
         public Builder timestamp(String timestamp) {
             this.timestamp = timestamp;
             return this;
@@ -118,6 +130,7 @@ public class DispatchServiceDto {
             dispatchServiceDto.serviceName = this.serviceName;
             dispatchServiceDto.timestamp = this.timestamp;
             dispatchServiceDto.txId = this.txId;
+            dispatchServiceDto.batchId = this.batchId;
             return dispatchServiceDto;
         }
     }

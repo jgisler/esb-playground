@@ -57,7 +57,8 @@ public class ProductResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response publishProduct( @HeaderParam(MessageConstants.TIMESTAMP)        String timestamp,
+    public Response publishProduct( @HeaderParam(MessageConstants.BATCH_ID)         String batchId,
+                                    @HeaderParam(MessageConstants.TIMESTAMP)        String timestamp,
                                     @HeaderParam(MessageConstants.TRANSACTION_ID)   String txId,
                                     @HeaderParam(MessageConstants.ENV_NAME)         String envName,
                                     @HeaderParam(MessageConstants.MESSAGE_VERSION)  String messageVersion,
@@ -67,6 +68,7 @@ public class ProductResource {
             ProductInfoDto productDto = new ProductInfoDto.Builder()
                     .environmentName(envName)
                     .messageVersion(messageVersion)
+                    .batchId(batchId)
                     .txId(txId)
                     .timestamp(timestamp)
                     .payload(serializationService.toJson(productInfo))

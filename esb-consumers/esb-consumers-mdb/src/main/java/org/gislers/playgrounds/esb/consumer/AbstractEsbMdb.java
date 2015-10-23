@@ -32,15 +32,16 @@ public abstract class AbstractEsbMdb implements MessageListener {
     public void onMessage(Message message) {
         TextMessage textMessage = (TextMessage) message;
         try {
-            dispatchService.dispatchMessage( new DispatchServiceDto.Builder()
-                    .serviceName(getServiceName())
-                    .clientName(getConsumerName())
-                    .environmentName(textMessage.getStringProperty(MessageConstants.ENV_NAME))
-                    .messageVersion(textMessage.getStringProperty(MessageConstants.MESSAGE_VERSION))
-                    .txId(textMessage.getStringProperty(MessageConstants.TRANSACTION_ID))
-                    .timestamp(textMessage.getStringProperty(MessageConstants.TIMESTAMP))
-                    .payload(textMessage.getText())
-                    .build()
+            dispatchService.dispatchMessage(new DispatchServiceDto.Builder()
+                            .serviceName(getServiceName())
+                            .clientName(getConsumerName())
+                            .environmentName(textMessage.getStringProperty(MessageConstants.ENV_NAME))
+                            .messageVersion(textMessage.getStringProperty(MessageConstants.MESSAGE_VERSION))
+                            .batchId(textMessage.getStringProperty(MessageConstants.BATCH_ID))
+                            .txId(textMessage.getStringProperty(MessageConstants.TRANSACTION_ID))
+                            .timestamp(textMessage.getStringProperty(MessageConstants.TIMESTAMP))
+                            .payload(textMessage.getText())
+                            .build()
             );
         }
         catch (JMSException e) {

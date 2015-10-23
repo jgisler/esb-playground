@@ -47,6 +47,7 @@ public class DispatchServiceBean implements DispatchService {
         return ClientBuilder.newClient()
                 .target(endpoint)
                 .request()
+                .header(MessageConstants.BATCH_ID, dispatchServiceDto.getBatchId())
                 .header(MessageConstants.TIMESTAMP, dispatchServiceDto.getTimestamp())
                 .header(MessageConstants.TRANSACTION_ID, dispatchServiceDto.getTxId())
                 .post(Entity.entity(dispatchServiceDto.getPayload(), MediaType.APPLICATION_JSON_TYPE), Response.class);
