@@ -13,6 +13,9 @@ import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 /**
@@ -24,25 +27,45 @@ import java.util.logging.Logger;
 public class PublishProductService {
 
     private static final String PI_ENDPOINT = "http://localhost:8080/esb-gateway/api/product";
-    private Logger logger = Logger.getLogger(PublishProductService.class.getSimpleName());
-    private Random random = new Random();
+    private static final Logger logger = Logger.getLogger(PublishProductService.class.getSimpleName());
+
+    private static final Random random = new Random();
+
+    private ExecutorService executor;
 
     @Inject
     private TrackingService trackingService;
 
     public String batchSend(int count) {
         String batchId = UUID.randomUUID().toString();
+        executor = Executors.newFixedThreadPool(20);
         for (int i = 0; i < count; i++) {
-            String msgVersion = i%2==0 ? "4.0" : "2.0";
-            GatewayResponse gatewayResponse = sendProductInfo( batchId, "jim-sim", msgVersion, generateProductInfo());
-            if( gatewayResponse.getErrorItems().isEmpty() ) {
-                trackingService.trackSend( batchId, gatewayResponse.getTxId() );
-            }
-            else {
+            String msgVersion = i % 2 == 0 ? "4.0" : "2.0";
+            GatewayResponse gatewayResponse = sendAsync(batchId, "jim-sim", msgVersion);
+            if (gatewayResponse.getErrorItems().isEmpty()) {
+                trackingService.trackSend(batchId, gatewayResponse.getTxId());
+            } else {
                 logger.warning(gatewayResponse.toString());
             }
         }
+        executor.shutdown();
+        while( !executor.isShutdown() ) {
+        }
         return batchId;
+    }
+
+    GatewayResponse sendAsync(String batchId, String envName, String msgVersion) {
+
+        Future<GatewayResponse> future = executor.submit(
+                () -> sendProductInfo(batchId, envName, msgVersion, generateProductInfo())
+        );
+
+        try {
+            return future.get();
+        }
+        catch( Exception e ) {
+            throw new RuntimeException(e);
+        }
     }
 
     ProductInfo generateProductInfo() {

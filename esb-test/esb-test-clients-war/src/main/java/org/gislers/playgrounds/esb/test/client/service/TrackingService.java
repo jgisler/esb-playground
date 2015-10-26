@@ -16,16 +16,27 @@ public class TrackingService {
     private ConcurrentHashMap<String, ConcurrentHashMap<String, AtomicLong>> trackingMap = new ConcurrentHashMap<>();
 
     public void trackSend( String batchId, String txId ) {
-        if( !(trackingMap.containsKey(batchId)) ) {
-            trackingMap.put( batchId, new ConcurrentHashMap<>() );
-        }
-        trackingMap.get( batchId ).put( txId, new AtomicLong(0) );
+        getOrAdd( batchId, txId );
     }
 
     public void trackReceive( String batchId, String txId, long duration ) {
-        trackingMap.get(batchId)
-                .get(txId)
-                .getAndSet(duration);
+        AtomicLong value;
+        while( (value = getOrAdd(batchId, txId)) == null ) {
+            snooze();
+        }
+        value.getAndSet(duration);
+    }
+
+    AtomicLong getOrAdd( String batchId, String txId ) {
+        if( !(trackingMap.containsKey(batchId)) ) {
+            trackingMap.put( batchId, new ConcurrentHashMap<>() );
+        }
+
+        if( !(trackingMap.get(batchId).containsKey( txId )) ) {
+            trackingMap.get(batchId).put( txId, new AtomicLong(0) );
+        }
+
+        return trackingMap.get( batchId ).get( txId );
     }
 
     public ConcurrentHashMap<String, AtomicLong> getTrackingByBatch( String batchId ) {
@@ -44,5 +55,13 @@ public class TrackingService {
 
     public void deleteBatch( String batchId ) {
         trackingMap.remove( batchId );
+    }
+
+    void snooze() {
+        try {
+            Thread.sleep( 20l );
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

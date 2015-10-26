@@ -38,6 +38,7 @@ public class PublishResource {
         String batchId = publishProductService.batchSend(count);
 
         while( trackingService.getBatchSize(batchId) < count ) {
+            logger.info( "Size: " + trackingService.getBatchSize(batchId) );
             snooze();
         }
 
