@@ -16,6 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +44,7 @@ public class PublishProductService {
         String batchId = UUID.randomUUID().toString();
 
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
-        executor = new ThreadPoolExecutor( 20, 20, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10), threadFactory );
+        executor = new ThreadPoolExecutor( 10, 20, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10), threadFactory, new PublisherRejectedExecutionHandler() );
 
         RunnableMonitor runnableMonitor = new RunnableMonitor( 1000, executor );
         Thread monitorThread = new Thread(runnableMonitor);
@@ -51,13 +52,19 @@ public class PublishProductService {
 
         for (int i = 0; i < count; i++) {
             String msgVersion = i % 2 == 0 ? "4.0" : "2.0";
-            GatewayResponse gatewayResponse = sendAsync(batchId, "jim-sim", msgVersion);
-            if (gatewayResponse.getErrorItems().isEmpty()) {
-                trackingService.trackSend(batchId, gatewayResponse.getTxId());
-            } else {
-                logger.warning(gatewayResponse.toString());
+            try {
+                GatewayResponse gatewayResponse = sendAsync(batchId, "jim-sim", msgVersion, generateProductInfo()).get();
+                if (gatewayResponse.getErrorItems().isEmpty()) {
+                    trackingService.trackSend(batchId, gatewayResponse.getTxId());
+                }
+                else {
+                    logger.warning(gatewayResponse.toString());
+                }
+            } catch( Exception e ) {
+                logger.warning(e.getMessage());
             }
         }
+
         executor.shutdown();
         while( !executor.isShutdown() ) {
         }
@@ -66,18 +73,10 @@ public class PublishProductService {
         return batchId;
     }
 
-    GatewayResponse sendAsync(String batchId, String envName, String msgVersion) {
-
-        Future<GatewayResponse> future = executor.submit(
-                () -> sendProductInfo(batchId, envName, msgVersion, generateProductInfo())
+    Future<GatewayResponse> sendAsync(String batchId, String envName, String msgVersion, ProductInfo productInfo) {
+        return executor.submit(
+                () -> sendProductInfo(batchId, envName, msgVersion, productInfo )
         );
-
-        try {
-            return future.get();
-        }
-        catch( Exception e ) {
-            throw new RuntimeException(e);
-        }
     }
 
     ProductInfo generateProductInfo() {
@@ -97,5 +96,24 @@ public class PublishProductService {
                 .header(MessageConstants.ENV_NAME, envName)
                 .header(MessageConstants.MESSAGE_VERSION, messageVersion)
                 .post(Entity.entity(productInfo, MediaType.APPLICATION_JSON_TYPE), GatewayResponse.class);
+    }
+
+    void snooze() {
+        try {
+            Thread.sleep( 1000 );
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    class PublisherRejectedExecutionHandler implements RejectedExecutionHandler {
+
+        @Override
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+            logger.warning( "Rejected execution, sleeping and retrying...." );
+            snooze();
+            executor.submit( r );
+        }
     }
 }
