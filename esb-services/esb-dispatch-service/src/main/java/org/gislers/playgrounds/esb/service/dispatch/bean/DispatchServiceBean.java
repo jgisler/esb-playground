@@ -8,6 +8,7 @@ import org.gislers.playgrounds.esb.service.dispatch.service.EndpointLookupServic
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -36,11 +37,27 @@ public class DispatchServiceBean implements DispatchService {
             throw new DispatchServiceException("Endpoint not configured: " + dispatchServiceDto.toString());
         }
         else {
-            Response response = sendMessage(endpoint, dispatchServiceDto);
-            if (!isSuccess(response)) {
+            Response response = sendMessageWithRetry(0, endpoint, dispatchServiceDto);
+            if (response != null && !isSuccess(response)) {
                 logger.info(dispatchServiceDto.getPayload() + " - " + response.toString());
             }
         }
+    }
+
+    Response sendMessageWithRetry( int tryCount, String endpoint, DispatchServiceDto dispatchServiceDto ) {
+        Response response = null;
+        while( tryCount < 3 ) {
+            try {
+                tryCount++;
+                response = sendMessage(endpoint, dispatchServiceDto);
+            }
+            catch( ProcessingException e ) {
+                logger.info( "TryCount: " + tryCount );
+                doExponentialBackoff(tryCount);
+                sendMessageWithRetry( tryCount, endpoint, dispatchServiceDto );
+            }
+        }
+        return response;
     }
 
     Response sendMessage(String endpoint, DispatchServiceDto dispatchServiceDto) {
@@ -57,5 +74,14 @@ public class DispatchServiceBean implements DispatchService {
         Response.Status responseStatus = Response.Status.fromStatusCode(response.getStatus());
         return  responseStatus == Response.Status.ACCEPTED
                 || responseStatus == Response.Status.OK;
+    }
+
+    void doExponentialBackoff( int tryCount ) {
+        try {
+            Thread.sleep( 100*tryCount );
+        }
+        catch (InterruptedException e) {
+            logger.warning( e.getMessage() );
+        }
     }
 }
