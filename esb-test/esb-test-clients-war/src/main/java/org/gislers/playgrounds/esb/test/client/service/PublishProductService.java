@@ -13,9 +13,12 @@ import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -31,14 +34,21 @@ public class PublishProductService {
 
     private static final Random random = new Random();
 
-    private ExecutorService executor;
+    private ThreadPoolExecutor executor;
 
     @Inject
     private TrackingService trackingService;
 
     public String batchSend(int count) {
         String batchId = UUID.randomUUID().toString();
-        executor = Executors.newFixedThreadPool(20);
+
+        ThreadFactory threadFactory = Executors.defaultThreadFactory();
+        executor = new ThreadPoolExecutor( 20, 20, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10), threadFactory );
+
+        RunnableMonitor runnableMonitor = new RunnableMonitor( 1000, executor );
+        Thread monitorThread = new Thread(runnableMonitor);
+        monitorThread.start();
+
         for (int i = 0; i < count; i++) {
             String msgVersion = i % 2 == 0 ? "4.0" : "2.0";
             GatewayResponse gatewayResponse = sendAsync(batchId, "jim-sim", msgVersion);
@@ -51,6 +61,8 @@ public class PublishProductService {
         executor.shutdown();
         while( !executor.isShutdown() ) {
         }
+        runnableMonitor.shutdown();
+
         return batchId;
     }
 
