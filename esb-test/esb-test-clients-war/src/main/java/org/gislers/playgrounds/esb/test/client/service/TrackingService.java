@@ -15,11 +15,7 @@ public class TrackingService {
 
     private ConcurrentHashMap<String, ConcurrentHashMap<String, AtomicLong>> trackingMap = new ConcurrentHashMap<>();
 
-    public void trackSend( String batchId, String txId ) {
-        getOrAdd( batchId, txId );
-    }
-
-    public void trackReceive( String batchId, String txId, long duration ) {
+    public void track( String batchId, String txId, long duration ) {
         AtomicLong value;
         while( (value = getOrAdd(batchId, txId)) == null ) {
             snooze();

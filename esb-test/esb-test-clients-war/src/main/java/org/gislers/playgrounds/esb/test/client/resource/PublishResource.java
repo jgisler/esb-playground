@@ -38,8 +38,7 @@ public class PublishResource {
         String batchId = publishProductService.batchSend(count);
 
         while( trackingService.getBatchSize(batchId) < count ) {
-            logger.info( "Size: " + trackingService.getBatchSize(batchId) );
-            snooze();
+            snooze( 20 );
         }
 
         ConcurrentHashMap<String, AtomicLong> trackingByBatch = trackingService.getTrackingByBatch(batchId);
@@ -50,9 +49,9 @@ public class PublishResource {
                 .build();
     }
 
-    void snooze() {
+    void snooze( int duration ) {
         try {
-            Thread.sleep( 20 );
+            Thread.sleep( duration );
         }
         catch (InterruptedException e) {
             logger.warning(e.getMessage());

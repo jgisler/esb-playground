@@ -37,14 +37,13 @@ public abstract class AbstractResource {
                                @HeaderParam(MessageConstants.TRANSACTION_ID) String txId,
                                ProductInfo productInfo) {
 
-        long txTime = System.currentTimeMillis() - Long.parseLong(timestamp);
-        trackingService.trackReceive( batchId, txId, txTime );
+        trackingService.track(batchId, txId, (System.currentTimeMillis() - Long.parseLong(timestamp)));
 
         ClientEndpointResponse clientEndpointResponse = new ClientEndpointResponse();
         clientEndpointResponse.setService("product/v3");
         clientEndpointResponse.setClient(getClient());
-        clientEndpointResponse.setTxId(txId);
         clientEndpointResponse.setGatewayTimestamp(timestamp);
+        clientEndpointResponse.setTxId(txId);
 
         return Response.accepted()
                 .entity(clientEndpointResponse)
@@ -61,8 +60,7 @@ public abstract class AbstractResource {
                                @HeaderParam(MessageConstants.TRANSACTION_ID) String txId,
                                ProductInfo productInfo) {
 
-        long txTime = System.currentTimeMillis() - Long.parseLong(timestamp);
-        trackingService.trackReceive( batchId, txId, txTime );
+        trackingService.track(batchId, txId, (System.currentTimeMillis() - Long.parseLong(timestamp)));
 
         ClientEndpointResponse clientEndpointResponse = new ClientEndpointResponse();
         clientEndpointResponse.setService("product/v4");
