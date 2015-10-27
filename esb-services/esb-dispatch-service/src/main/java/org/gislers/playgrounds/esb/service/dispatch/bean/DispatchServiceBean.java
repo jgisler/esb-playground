@@ -6,9 +6,10 @@ import org.gislers.playgrounds.esb.service.dispatch.dto.DispatchServiceDto;
 import org.gislers.playgrounds.esb.service.dispatch.exception.DispatchServiceException;
 import org.gislers.playgrounds.esb.service.dispatch.service.EndpointLookupService;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.ProcessingException;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -29,6 +30,13 @@ public class DispatchServiceBean implements DispatchService {
     @Inject
     private EndpointLookupService endpointLookupService;
 
+    private Client client;
+
+    @PostConstruct
+    private void init() {
+        client = ClientBuilder.newClient();
+    }
+
     @Override
     public void dispatchMessage(DispatchServiceDto dispatchServiceDto) {
         String endpoint = endpointLookupService.findEndpoint(dispatchServiceDto);
@@ -37,31 +45,15 @@ public class DispatchServiceBean implements DispatchService {
             throw new DispatchServiceException("Endpoint not configured: " + dispatchServiceDto.toString());
         }
         else {
-            Response response = sendMessageWithRetry(0, endpoint, dispatchServiceDto);
+            Response response = sendMessage(endpoint, dispatchServiceDto);
             if (response != null && !isSuccess(response)) {
                 logger.info(dispatchServiceDto.getPayload() + " - " + response.toString());
             }
         }
     }
 
-    Response sendMessageWithRetry( int tryCount, String endpoint, DispatchServiceDto dispatchServiceDto ) {
-        Response response = null;
-        while( tryCount < 3 ) {
-            try {
-                tryCount++;
-                response = sendMessage(endpoint, dispatchServiceDto);
-            }
-            catch( ProcessingException e ) {
-                logger.info( "TryCount: " + tryCount );
-                doExponentialBackoff(tryCount);
-                sendMessageWithRetry( tryCount, endpoint, dispatchServiceDto );
-            }
-        }
-        return response;
-    }
-
     Response sendMessage(String endpoint, DispatchServiceDto dispatchServiceDto) {
-        return ClientBuilder.newClient()
+        return client
                 .target(endpoint)
                 .request()
                 .header(MessageConstants.BATCH_ID, dispatchServiceDto.getBatchId())
@@ -74,14 +66,5 @@ public class DispatchServiceBean implements DispatchService {
         Response.Status responseStatus = Response.Status.fromStatusCode(response.getStatus());
         return  responseStatus == Response.Status.ACCEPTED
                 || responseStatus == Response.Status.OK;
-    }
-
-    void doExponentialBackoff( int tryCount ) {
-        try {
-            Thread.sleep( 100*tryCount );
-        }
-        catch (InterruptedException e) {
-            logger.warning( e.getMessage() );
-        }
     }
 }
