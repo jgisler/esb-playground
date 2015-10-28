@@ -7,6 +7,7 @@ import org.gislers.playgrounds.esb.service.publish.dto.ProductInfoDto;
 import org.gislers.playgrounds.esb.service.publish.exception.PublishException;
 
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -34,6 +35,7 @@ public class PublishServiceBean implements PublishService {
     private Queue inboundProductQueue;
 
     @Override
+    @Asynchronous
     public void publish( final ProductInfoDto productDto) throws PublishException {
 
         Connection connection = null;
@@ -48,8 +50,6 @@ public class PublishServiceBean implements PublishService {
             messageProducer.setDeliveryMode(DeliveryMode.PERSISTENT);
 
             TextMessage textMessage = session.createTextMessage(productDto.getPayload());
-            textMessage.setStringProperty(MessageConstants.TIMESTAMP        , productDto.getTimestamp());
-            textMessage.setStringProperty(MessageConstants.BATCH_ID         , productDto.getBatchId());
             textMessage.setStringProperty(MessageConstants.TRANSACTION_ID   , productDto.getTxId());
             textMessage.setStringProperty(MessageConstants.ENV_NAME         , productDto.getEnvironmentName());
             textMessage.setStringProperty(MessageConstants.MESSAGE_VERSION  , productDto.getMessageVersion());

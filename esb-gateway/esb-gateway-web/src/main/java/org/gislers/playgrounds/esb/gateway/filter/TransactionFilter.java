@@ -24,11 +24,5 @@ public class TransactionFilter implements ContainerRequestFilter {
             txId = UUID.randomUUID().toString();
             requestContext.getHeaders().add(MessageConstants.TRANSACTION_ID, txId);
         }
-
-        String timestamp = requestContext.getHeaderString(MessageConstants.TIMESTAMP);
-        if( isBlank(timestamp) ) {
-            timestamp = Long.toString(System.currentTimeMillis());
-            requestContext.getHeaders().add(MessageConstants.TIMESTAMP, timestamp);
-        }
     }
 }

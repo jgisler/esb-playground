@@ -37,9 +37,7 @@ public abstract class AbstractEsbMdb implements MessageListener {
                             .clientName(getConsumerName())
                             .environmentName(textMessage.getStringProperty(MessageConstants.ENV_NAME))
                             .messageVersion(textMessage.getStringProperty(MessageConstants.MESSAGE_VERSION))
-                            .batchId(textMessage.getStringProperty(MessageConstants.BATCH_ID))
                             .txId(textMessage.getStringProperty(MessageConstants.TRANSACTION_ID))
-                            .timestamp(textMessage.getStringProperty(MessageConstants.TIMESTAMP))
                             .payload(textMessage.getText())
                             .build()
             );

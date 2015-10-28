@@ -1,4 +1,4 @@
-package org.gislers.playgrounds.esb.test.client.model;
+package org.gislers.playgrounds.esb.common.http;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -12,7 +12,6 @@ public class ClientEndpointResponse {
     private String service;
     private String client;
     private String txId;
-    private String gatewayTimestamp;
 
     public ClientEndpointResponse() {
     }
@@ -39,13 +38,5 @@ public class ClientEndpointResponse {
 
     public void setTxId(String txId) {
         this.txId = txId;
-    }
-
-    public String getGatewayTimestamp() {
-        return gatewayTimestamp;
-    }
-
-    public void setGatewayTimestamp(String gatewayTimestamp) {
-        this.gatewayTimestamp = gatewayTimestamp;
     }
 }

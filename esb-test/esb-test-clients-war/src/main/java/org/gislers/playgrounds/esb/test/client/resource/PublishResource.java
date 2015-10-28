@@ -1,7 +1,6 @@
 package org.gislers.playgrounds.esb.test.client.resource;
 
 import org.gislers.playgrounds.esb.test.client.service.PublishProductService;
-import org.gislers.playgrounds.esb.test.client.service.TrackingService;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -10,8 +9,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 /**
@@ -26,35 +23,13 @@ public class PublishResource {
     @Inject
     private PublishProductService publishProductService;
 
-    @Inject
-    private TrackingService trackingService;
-
     @GET
     @Path( "/productinfo/{count}" )
     @Produces(MediaType.APPLICATION_JSON)
     public Response publishProductInfo( @PathParam("count") int count ) {
 
         logger.info("Requesting " + count + " messages...");
-        String batchId = publishProductService.batchSend(count);
-
-        while( trackingService.getBatchSize(batchId) < count ) {
-            snooze( 20 );
-        }
-
-        ConcurrentHashMap<String, AtomicLong> trackingByBatch = trackingService.getTrackingByBatch(batchId);
-        trackingService.deleteBatch( batchId );
-
-        return Response.status(Response.Status.OK)
-                .entity( trackingByBatch )
-                .build();
-    }
-
-    void snooze( int duration ) {
-        try {
-            Thread.sleep( duration );
-        }
-        catch (InterruptedException e) {
-            logger.warning(e.getMessage());
-        }
+        publishProductService.batchSend( count );
+        return Response.status(Response.Status.OK).build();
     }
 }

@@ -77,12 +77,14 @@
             <artifactId>esb-test-clients-war</artifactId>
             <type>war</type>
         </dependency>
-
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
             <artifactId>esb-common</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

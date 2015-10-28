@@ -1,11 +1,11 @@
 package org.gislers.playgrounds.esb.test.client.service;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.gislers.playgrounds.esb.common.http.GatewayResponse;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.model.ProductInfo;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.client.ClientBuilder;
@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -42,9 +41,6 @@ public class PublishProductService {
 
     private Random random;
 
-    @Inject
-    private TrackingService trackingService;
-
     @PostConstruct
     private void init() {
         random = new Random();
@@ -68,19 +64,12 @@ public class PublishProductService {
                 String msgVersion = i % 2 == 0 ? "4.0" : "2.0";
                 futureResponses.add(
                     executor.submit(
-                        new Callable<GatewayResponse>() {
-
-                            @Override
-                            public GatewayResponse call() throws Exception {
-                                return ClientBuilder.newClient()
-                                        .target(PI_ENDPOINT)
-                                        .request()
-                                        .header(MessageConstants.BATCH_ID, batchId)
-                                        .header(MessageConstants.ENV_NAME, "jim-sim")
-                                        .header(MessageConstants.MESSAGE_VERSION, msgVersion)
-                                        .post(Entity.entity(generateProductInfo(), MediaType.APPLICATION_JSON_TYPE), GatewayResponse.class);
-                            }
-                        }
+                            () -> ClientBuilder.newClient()
+                                    .target(PI_ENDPOINT)
+                                    .request()
+                                    .header(MessageConstants.ENV_NAME, "jim-sim")
+                                    .header(MessageConstants.MESSAGE_VERSION, msgVersion)
+                                    .post(Entity.entity(generateProductInfo(), MediaType.APPLICATION_JSON_TYPE), GatewayResponse.class)
                     )
                 );
                 counter++;
@@ -99,12 +88,23 @@ public class PublishProductService {
             }
         }
 
+        logger.info( "Shutting down the executor..." );
         executor.shutdown();
         while( !executor.isShutdown() ) {
+            snooze(1000);
         }
         runnableMonitor.shutdown();
 
         return batchId;
+    }
+
+    void snooze(int duration) {
+        try {
+            Thread.sleep( duration );
+        }
+        catch (InterruptedException e) {
+            logger.warning( ExceptionUtils.getRootCauseMessage(e) );
+        }
     }
 
     ThreadPoolExecutor threadPoolExecutor() {

@@ -25,31 +25,15 @@
     </build>
 
     <dependencies>
-
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
             <artifactId>esb-common</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jglue.cdi-unit</groupId>
-            <artifactId>cdi-unit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-
     </dependencies>
 </project>

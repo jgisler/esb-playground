@@ -35,31 +35,19 @@ public class ProductResource {
 
     private static final Logger logger = Logger.getLogger( ProductResource.class.getSimpleName() );
 
-    private PublishService publishService;
-    private SerializationService serializationService;
-    private ValidationService validationService;
-
     @EJB
-    public void setPublishService(PublishService publishService) {
-        this.publishService = publishService;
-    }
+    private PublishService publishService;
 
     @Inject
-    public void setSerializationService(SerializationService serializationService) {
-        this.serializationService = serializationService;
-    }
+    private SerializationService serializationService;
 
     @Inject
-    public void setValidationService(ValidationService validationService) {
-        this.validationService = validationService;
-    }
+    private ValidationService validationService;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response publishProduct( @HeaderParam(MessageConstants.BATCH_ID)         String batchId,
-                                    @HeaderParam(MessageConstants.TIMESTAMP)        String timestamp,
-                                    @HeaderParam(MessageConstants.TRANSACTION_ID)   String txId,
+    public Response publishProduct( @HeaderParam(MessageConstants.TRANSACTION_ID)   String txId,
                                     @HeaderParam(MessageConstants.ENV_NAME)         String envName,
                                     @HeaderParam(MessageConstants.MESSAGE_VERSION)  String messageVersion,
                                     ProductInfo productInfo ) {
@@ -68,15 +56,13 @@ public class ProductResource {
             ProductInfoDto productDto = new ProductInfoDto.Builder()
                     .environmentName(envName)
                     .messageVersion(messageVersion)
-                    .batchId(batchId)
                     .txId(txId)
-                    .timestamp(timestamp)
                     .payload(serializationService.toJson(productInfo))
                     .build();
 
             List<String> errors = validationService.validate(productDto);
             if( !errors.isEmpty() ) {
-                response = buildErrorResponse(txId, timestamp, errors, Response.Status.BAD_REQUEST);
+                response = buildErrorResponse(txId, errors, Response.Status.BAD_REQUEST);
             }
             else {
                 publishService.publish(productDto);
@@ -84,10 +70,10 @@ public class ProductResource {
             }
         }
         catch( JsonProcessingException e ) {
-            response = buildErrorResponse(txId, timestamp, e, Response.Status.BAD_REQUEST);
+            response = buildErrorResponse(txId, e, Response.Status.BAD_REQUEST);
         }
         catch( PublishException e ) {
-            response = buildErrorResponse(txId, timestamp, e, Response.Status.INTERNAL_SERVER_ERROR);
+            response = buildErrorResponse(txId, e, Response.Status.INTERNAL_SERVER_ERROR);
         }
         return response;
     }
@@ -95,21 +81,19 @@ public class ProductResource {
     Response buildSuccessResponse( ProductInfoDto productDto ) {
         GatewayResponse gatewayResponse = new GatewayResponse();
         gatewayResponse.setTxId(productDto.getTxId());
-        gatewayResponse.setGatewayTimestamp(Long.parseLong(productDto.getTimestamp()));
         return Response.accepted(gatewayResponse)
                 .build();
     }
 
-    Response buildErrorResponse(String txId, String gatewayTimestamp, Throwable throwable, Response.Status status) {
+    Response buildErrorResponse(String txId, Throwable throwable, Response.Status status) {
         List<String> errors = new ArrayList<>();
         errors.add( ExceptionUtils.getRootCauseMessage(throwable) );
-        return buildErrorResponse(txId, gatewayTimestamp, errors, status);
+        return buildErrorResponse(txId, errors, status);
     }
 
-    Response buildErrorResponse(String txId, String gatewayTimestamp, List<String> errors, Response.Status status) {
+    Response buildErrorResponse(String txId, List<String> errors, Response.Status status) {
         GatewayResponse response = new GatewayResponse();
         response.setTxId( txId );
-        response.setGatewayTimestamp(Long.parseLong(gatewayTimestamp));
         for( String error : errors ) {
             response.getErrorItems().add( new ErrorItem(UUID.randomUUID(), error) );
         }

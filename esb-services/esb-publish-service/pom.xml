@@ -15,27 +15,16 @@
     <packaging>ejb</packaging>
 
     <dependencies>
-
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
             <artifactId>esb-common</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <!--JEE API-->
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>${java-ee.api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
 
 </project>
