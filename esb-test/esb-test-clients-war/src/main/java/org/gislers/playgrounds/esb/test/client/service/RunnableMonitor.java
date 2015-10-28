@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  */
 public class RunnableMonitor implements Runnable {
 
-    private static final String MSG_TEMPLATE = "[ corePoolSize=%d, poolSize=%d, largestPoolSize=%d, activeCount=%d, taskCount=%d, completedTaskCount=%d ]";
+    private static final String MSG_TEMPLATE = "[poolSize=%d, activeCount=%d completedTaskCount=%d]";
 
     private static final Logger logger = Logger.getLogger( RunnableMonitor.class.getSimpleName() );
 
@@ -33,11 +33,8 @@ public class RunnableMonitor implements Runnable {
         while( runIt ) {
             logger.info(
                 String.format(MSG_TEMPLATE,
-                    executor.getCorePoolSize(),
                     executor.getPoolSize(),
-                    executor.getLargestPoolSize(),
                     executor.getActiveCount(),
-                    executor.getTaskCount(),
                     executor.getCompletedTaskCount())
             );
 
