@@ -6,10 +6,9 @@ import org.gislers.playgrounds.esb.service.dispatch.dto.DispatchServiceDto;
 import org.gislers.playgrounds.esb.service.dispatch.exception.DispatchServiceException;
 import org.gislers.playgrounds.esb.service.dispatch.service.EndpointLookupService;
 
-import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -30,14 +29,8 @@ public class DispatchServiceBean implements DispatchService {
     @Inject
     private EndpointLookupService endpointLookupService;
 
-    private Client client;
-
-    @PostConstruct
-    private void init() {
-        client = ClientBuilder.newClient();
-    }
-
     @Override
+    @Asynchronous
     public void dispatchMessage(DispatchServiceDto dispatchServiceDto) {
         String endpoint = endpointLookupService.findEndpoint(dispatchServiceDto);
         if( isBlank(endpoint) ) {
@@ -53,7 +46,7 @@ public class DispatchServiceBean implements DispatchService {
     }
 
     Response sendMessage(String endpoint, DispatchServiceDto dispatchServiceDto) {
-        return client
+        return ClientBuilder.newClient()
                 .target(endpoint)
                 .request()
                 .header(MessageConstants.BATCH_ID, dispatchServiceDto.getBatchId())
