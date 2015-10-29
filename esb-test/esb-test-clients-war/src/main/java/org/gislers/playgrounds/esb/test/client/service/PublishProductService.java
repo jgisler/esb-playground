@@ -4,8 +4,10 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.gislers.playgrounds.esb.common.http.GatewayResponse;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.model.ProductInfo;
+import org.gislers.playgrounds.esb.test.client.dto.AuditServiceDto;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.client.ClientBuilder;
@@ -13,7 +15,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -41,12 +45,15 @@ public class PublishProductService {
 
     private Random random;
 
+    @Inject
+    private AuditService auditService;
+
     @PostConstruct
     private void init() {
         random = new Random();
     }
 
-    public String batchSend(int batchSize) {
+    public Map<String, AuditServiceDto> batchSend(int batchSize) {
 
         ThreadPoolExecutor executor = threadPoolExecutor();
 
@@ -54,7 +61,7 @@ public class PublishProductService {
         Thread monitorThread = new Thread(runnableMonitor);
         monitorThread.start();
 
-        String batchId = UUID.randomUUID().toString();
+        List<String> txIds = new ArrayList<>(batchSize);
 
         int counter = 0;
         while( counter < batchSize ) {
@@ -78,7 +85,12 @@ public class PublishProductService {
             for( Future<GatewayResponse> futureResponse : futureResponses ) {
                 try {
                     GatewayResponse gatewayResponse = futureResponse.get();
-                    if( !gatewayResponse.getErrorItems().isEmpty() ) {
+                    if( gatewayResponse.getErrorItems().isEmpty() ) {
+                        String txId = gatewayResponse.getTxId();
+                        txIds.add( txId );
+                        auditService.auditSent( txId );
+                    }
+                    else {
                         logger.warning(gatewayResponse.toString());
                     }
                 }
@@ -95,7 +107,13 @@ public class PublishProductService {
         }
         runnableMonitor.shutdown();
 
-        return batchId;
+        Map<String, AuditServiceDto> auditMap = new HashMap<>();
+        for( String txId : txIds ) {
+
+            auditMap.put( txId, auditService.getAudit(txId) );
+        }
+
+        return auditMap;
     }
 
     void snooze(int duration) {

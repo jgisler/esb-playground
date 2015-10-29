@@ -1,5 +1,6 @@
 package org.gislers.playgrounds.esb.test.client.resource;
 
+import org.gislers.playgrounds.esb.test.client.dto.AuditServiceDto;
 import org.gislers.playgrounds.esb.test.client.service.PublishProductService;
 
 import javax.inject.Inject;
@@ -9,6 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -29,7 +31,9 @@ public class PublishResource {
     public Response publishProductInfo( @PathParam("count") int count ) {
 
         logger.info("Requesting " + count + " messages...");
-        publishProductService.batchSend( count );
-        return Response.status(Response.Status.OK).build();
+        Map<String, AuditServiceDto> auditServiceDtoMap = publishProductService.batchSend( count );
+        return Response.status(Response.Status.OK)
+                .entity(auditServiceDtoMap)
+                .build();
     }
 }
