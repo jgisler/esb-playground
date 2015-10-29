@@ -13,7 +13,7 @@
     </parent>
 
     <artifactId>esb-consumers-mdb</artifactId>
-    <packaging>ejb</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

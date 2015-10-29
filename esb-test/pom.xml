@@ -22,14 +22,12 @@
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
                 <artifactId>esb-test-clients-war</artifactId>
                 <version>${project.parent.version}</version>
                 <type>war</type>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 </project>

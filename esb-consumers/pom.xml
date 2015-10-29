@@ -26,7 +26,6 @@
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
                 <artifactId>esb-dispatch-service</artifactId>
@@ -38,7 +37,7 @@
                 <groupId>org.gislers.playgrounds.esb</groupId>
                 <artifactId>esb-consumers-mdb</artifactId>
                 <version>${project.parent.version}</version>
-                <type>ejb</type>
+                <type>jar</type>
             </dependency>
 
             <!--Camel-->
@@ -49,7 +48,6 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 

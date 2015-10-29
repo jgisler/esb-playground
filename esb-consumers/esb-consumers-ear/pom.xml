@@ -26,10 +26,10 @@
                     <defaultJavaBundleDir>/</defaultJavaBundleDir>
                     <skinnyWars>true</skinnyWars>
                     <modules>
-                        <ejbModule>
+                        <jarModule>
                             <groupId>org.gislers.playgrounds.esb</groupId>
                             <artifactId>esb-consumers-mdb</artifactId>
-                        </ejbModule>
+                        </jarModule>
                         <jarModule>
                             <groupId>org.gislers.playgrounds.esb</groupId>
                             <artifactId>esb-common</artifactId>
@@ -82,8 +82,7 @@
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
             <artifactId>esb-consumers-mdb</artifactId>
-            <version>${project.parent.version}</version>
-            <type>ejb</type>
+            <type>jar</type>
         </dependency>
 
         <dependency>
