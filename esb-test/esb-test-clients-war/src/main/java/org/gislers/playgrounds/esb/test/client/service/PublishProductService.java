@@ -40,7 +40,7 @@ public class PublishProductService {
 
     private static final Logger logger = Logger.getLogger(PublishProductService.class.getSimpleName());
 
-    private static final int CORE_POOL_SIZE     = 15;
+    private static final int CORE_POOL_SIZE     = 10;
     private static final int MAX_POOL_SIZE      = 20;
     private static final int KEEP_ALIVE_TIME    = 10;
 
@@ -58,7 +58,7 @@ public class PublishProductService {
 
         ThreadPoolExecutor executor = threadPoolExecutor();
 
-        RunnableMonitor runnableMonitor = new RunnableMonitor( 1000, executor );
+        RunnableMonitor runnableMonitor = new RunnableMonitor( 5000, executor );
         Thread monitorThread = new Thread(runnableMonitor);
         monitorThread.start();
 
@@ -68,7 +68,7 @@ public class PublishProductService {
         while( counter < batchSize ) {
 
             List<Future<Response>> futureResponses = new ArrayList<>();
-            for (int i = 0; i<MAX_POOL_SIZE && i<batchSize; i++) {
+            for (int i = 0; i<CORE_POOL_SIZE && i<batchSize; i++) {
                 String msgVersion = i % 2 == 0 ? "4.0" : "2.0";
                 futureResponses.add(
                     executor.submit(
