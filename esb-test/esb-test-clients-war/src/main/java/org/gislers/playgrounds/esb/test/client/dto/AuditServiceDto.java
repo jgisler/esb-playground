@@ -9,26 +9,25 @@ import java.util.List;
  */
 public class AuditServiceDto {
 
-    private Long sentTimestamp;
-    private List<Long> receivedTimestamps = new ArrayList<>();
+    private String txId;
+    private List<Long> timings = new ArrayList<>(2);
 
     public AuditServiceDto() {
-        sentTimestamp = System.currentTimeMillis();
     }
 
-    public Long getSentTimestamp() {
-        return sentTimestamp;
+    public String getTxId() {
+        return txId;
     }
 
-    public void setSentTimestamp(Long sentTimestamp) {
-        this.sentTimestamp = sentTimestamp;
+    public void setTxId(String txId) {
+        this.txId = txId;
     }
 
-    public List<Long> getReceivedTimestamps() {
-        return receivedTimestamps;
+    public List<Long> getTimings() {
+        return timings;
     }
 
-    public void setReceivedTimestamps(List<Long> receivedTimestamps) {
-        this.receivedTimestamps = receivedTimestamps;
+    public void setTimings(List<Long> timings) {
+        this.timings = timings;
     }
 }

@@ -38,9 +38,17 @@ public class DispatchServiceBean implements DispatchService {
             throw new DispatchServiceException("Endpoint not configured: " + dispatchServiceDto.toString());
         }
         else {
-            Response response = sendMessage(endpoint, dispatchServiceDto);
-            if (response != null && !isSuccess(response)) {
-                logger.info(dispatchServiceDto.getPayload() + " - " + response.toString());
+            Response response = null;
+            try {
+                response = sendMessage(endpoint, dispatchServiceDto);
+                if (response != null && !isSuccess(response)) {
+                    logger.info(dispatchServiceDto.getPayload() + " - " + response.toString());
+                }
+            }
+            finally {
+                if( response != null ) {
+                    response.close();
+                }
             }
         }
     }

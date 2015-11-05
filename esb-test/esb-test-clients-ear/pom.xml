@@ -43,6 +43,31 @@
                 </configuration>
                 <executions>
 
+                    <!-- Add a data source -->
+                    <execution>
+                        <id>add-datasource</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <address>subsystem=datasources,data-source=EsbDS</address>
+                            <resources>
+                                <resource>
+                                    <properties>
+                                        <connection-url>jdbc:h2:mem:esb_db;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1</connection-url>
+                                        <jndi-name>java:/ds/EsbDs</jndi-name>
+                                        <enable>true</enable>
+                                        <user-name>sa</user-name>
+                                        <password>sa</password>
+                                        <driver-name>h2</driver-name>
+                                        <use-ccm>false</use-ccm>
+                                    </properties>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <id>undeploy-ear</id>
                         <goals>

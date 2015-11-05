@@ -1,23 +1,24 @@
 package org.gislers.playgrounds.esb.test.client.service;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.http.HttpStatus;
 import org.gislers.playgrounds.esb.common.http.GatewayResponse;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.model.ProductInfo;
-import org.gislers.playgrounds.esb.test.client.dto.AuditServiceDto;
+import org.gislers.playgrounds.esb.test.client.dao.AuditSentDao;
+import org.gislers.playgrounds.esb.test.client.entity.AuditSentEntity;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -39,21 +40,21 @@ public class PublishProductService {
 
     private static final Logger logger = Logger.getLogger(PublishProductService.class.getSimpleName());
 
-    private static final int CORE_POOL_SIZE     = 10;
+    private static final int CORE_POOL_SIZE     = 15;
     private static final int MAX_POOL_SIZE      = 20;
     private static final int KEEP_ALIVE_TIME    = 10;
 
     private Random random;
 
-    @Inject
-    private AuditService auditService;
+    @EJB
+    private AuditSentDao auditSentDao;
 
     @PostConstruct
     private void init() {
         random = new Random();
     }
 
-    public Map<String, AuditServiceDto> batchSend(int batchSize) {
+    public List<String> batchSend(int batchSize) {
 
         ThreadPoolExecutor executor = threadPoolExecutor();
 
@@ -66,8 +67,8 @@ public class PublishProductService {
         int counter = 0;
         while( counter < batchSize ) {
 
-            List<Future<GatewayResponse>> futureResponses = new ArrayList<>();
-            for (int i = 0; i<10 && i<batchSize; i++) {
+            List<Future<Response>> futureResponses = new ArrayList<>();
+            for (int i = 0; i<MAX_POOL_SIZE && i<batchSize; i++) {
                 String msgVersion = i % 2 == 0 ? "4.0" : "2.0";
                 futureResponses.add(
                     executor.submit(
@@ -76,26 +77,34 @@ public class PublishProductService {
                                     .request()
                                     .header(MessageConstants.ENV_NAME, "jim-sim")
                                     .header(MessageConstants.MESSAGE_VERSION, msgVersion)
-                                    .post(Entity.entity(generateProductInfo(), MediaType.APPLICATION_JSON_TYPE), GatewayResponse.class)
+                                    .post(Entity.entity(generateProductInfo(), MediaType.APPLICATION_JSON_TYPE), Response.class)
                     )
                 );
                 counter++;
             }
 
-            for( Future<GatewayResponse> futureResponse : futureResponses ) {
+            for( Future<Response> futureResponse : futureResponses ) {
+                Response response = null;
                 try {
-                    GatewayResponse gatewayResponse = futureResponse.get();
-                    if( gatewayResponse.getErrorItems().isEmpty() ) {
-                        String txId = gatewayResponse.getTxId();
-                        txIds.add( txId );
-                        auditService.auditSent( txId );
-                    }
-                    else {
-                        logger.warning(gatewayResponse.toString());
+                    response = futureResponse.get();
+                    if( response != null && response.getStatus() == HttpStatus.SC_ACCEPTED ) {
+                        GatewayResponse gatewayResponse = response.readEntity(GatewayResponse.class);
+                        if (gatewayResponse.getErrorItems().isEmpty()) {
+                            String txId = gatewayResponse.getTxId();
+                            auditSentDao.create(new AuditSentEntity(txId, System.currentTimeMillis()));
+                            txIds.add(txId);
+                        } else {
+                            logger.warning(gatewayResponse.toString());
+                        }
                     }
                 }
                 catch( Exception e ) {
                     e.printStackTrace();
+                }
+                finally {
+                    if( response != null ) {
+                        response.close();
+                    }
                 }
             }
         }
@@ -106,14 +115,7 @@ public class PublishProductService {
             snooze(1000);
         }
         runnableMonitor.shutdown();
-
-        Map<String, AuditServiceDto> auditMap = new HashMap<>();
-        for( String txId : txIds ) {
-
-            auditMap.put( txId, auditService.getAudit(txId) );
-        }
-
-        return auditMap;
+        return txIds;
     }
 
     void snooze(int duration) {

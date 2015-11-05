@@ -13,7 +13,7 @@ public class GatewayResponse {
 
     private String txId;
     private long gatewayTimestamp;
-    private List<ErrorItem> errorItems = new ArrayList<>();
+    private List<ErrorItem> errorItems;
 
     public GatewayResponse() {
     }
@@ -35,6 +35,9 @@ public class GatewayResponse {
     }
 
     public List<ErrorItem> getErrorItems() {
+        if( errorItems == null ) {
+            errorItems = new ArrayList<>();
+        }
         return errorItems;
     }
 
