@@ -11,11 +11,21 @@ import java.util.List;
 @XmlRootElement
 public class GatewayResponse {
 
+    private int httpStatus;
     private String txId;
     private long gatewayTimestamp;
-    private List<ErrorItem> errorItems;
+    private List<ErrorItem> errorItems = new ArrayList<>();
 
     public GatewayResponse() {
+        gatewayTimestamp = System.currentTimeMillis();
+    }
+
+    public int getHttpStatus() {
+        return httpStatus;
+    }
+
+    public void setHttpStatus(int httpStatus) {
+        this.httpStatus = httpStatus;
     }
 
     public String getTxId() {
@@ -30,19 +40,12 @@ public class GatewayResponse {
         return gatewayTimestamp;
     }
 
-    public void setGatewayTimestamp(long gatewayTimestamp) {
-        this.gatewayTimestamp = gatewayTimestamp;
-    }
-
     public List<ErrorItem> getErrorItems() {
-        if( errorItems == null ) {
-            errorItems = new ArrayList<>();
-        }
         return errorItems;
     }
 
     public void setErrorItems(List<ErrorItem> errorItems) {
-        this.errorItems = errorItems;
+        this.errorItems.addAll( errorItems );
     }
 
     @Override

@@ -64,8 +64,8 @@ public class PublishResource {
     }
 
     AuditSentEntity getAudit( String txId ) {
-        int maxSnooze = 10;
         int snoozeCount = 0;
+        int maxSnooze = 10;
 
         AuditSentEntity auditSentEntity = null;
         while( snoozeCount < maxSnooze && (auditSentEntity = auditSentDao.fetch(txId)).getAuditReceivedEntities().size() < 2 ) {

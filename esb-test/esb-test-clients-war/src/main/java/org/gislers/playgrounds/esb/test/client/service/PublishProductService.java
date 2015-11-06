@@ -15,7 +15,6 @@ import javax.inject.Singleton;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ import java.util.logging.Logger;
 @Singleton
 public class PublishProductService {
 
-    private static final String PI_ENDPOINT = "http://localhost:8080/esb-gateway/api/product";
+    private static final String PI_ENDPOINT = "http://10.216.138.218:8080/esb-gateway/api/product";
 
     private static final Logger logger = Logger.getLogger(PublishProductService.class.getSimpleName());
 
@@ -67,7 +66,7 @@ public class PublishProductService {
         int counter = 0;
         while( counter < batchSize ) {
 
-            List<Future<Response>> futureResponses = new ArrayList<>();
+            List<Future<GatewayResponse>> futureResponses = new ArrayList<>();
             for (int i = 0; i<CORE_POOL_SIZE && i<batchSize; i++) {
                 String msgVersion = i % 2 == 0 ? "4.0" : "2.0";
                 futureResponses.add(
@@ -77,21 +76,19 @@ public class PublishProductService {
                                     .request()
                                     .header(MessageConstants.ENV_NAME, "jim-sim")
                                     .header(MessageConstants.MESSAGE_VERSION, msgVersion)
-                                    .post(Entity.entity(generateProductInfo(), MediaType.APPLICATION_JSON_TYPE), Response.class)
+                                    .post(Entity.entity(generateProductInfo(), MediaType.APPLICATION_JSON_TYPE), GatewayResponse.class)
                     )
                 );
                 counter++;
             }
 
-            for( Future<Response> futureResponse : futureResponses ) {
-                Response response = null;
+            for( Future<GatewayResponse> futureResponse : futureResponses ) {
                 try {
-                    response = futureResponse.get();
-                    if( response != null && response.getStatus() == HttpStatus.SC_ACCEPTED ) {
-                        GatewayResponse gatewayResponse = response.readEntity(GatewayResponse.class);
-                        if (gatewayResponse.getErrorItems().isEmpty()) {
+                    GatewayResponse gatewayResponse = futureResponse.get();
+                    if( HttpStatus.SC_ACCEPTED == gatewayResponse.getHttpStatus() ) {
+                        if( gatewayResponse.getErrorItems().isEmpty() ) {
                             String txId = gatewayResponse.getTxId();
-                            auditSentDao.create(new AuditSentEntity(txId, System.currentTimeMillis()));
+                            auditSentDao.create(new AuditSentEntity(txId, gatewayResponse.getGatewayTimestamp()));
                             txIds.add(txId);
                         } else {
                             logger.warning(gatewayResponse.toString());
@@ -100,11 +97,6 @@ public class PublishProductService {
                 }
                 catch( Exception e ) {
                     e.printStackTrace();
-                }
-                finally {
-                    if( response != null ) {
-                        response.close();
-                    }
                 }
             }
         }

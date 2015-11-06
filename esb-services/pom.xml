@@ -20,21 +20,4 @@
         <module>esb-dispatch-service</module>
     </modules>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.gislers.playgrounds.esb</groupId>
-                <artifactId>esb-publish-service</artifactId>
-                <version>${project.parent.version}</version>
-                <type>ejb</type>
-            </dependency>
-            <dependency>
-                <groupId>org.gislers.playgrounds.esb</groupId>
-                <artifactId>esb-dispatch-service</artifactId>
-                <version>${project.parent.version}</version>
-                <type>ejb</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
 </project>

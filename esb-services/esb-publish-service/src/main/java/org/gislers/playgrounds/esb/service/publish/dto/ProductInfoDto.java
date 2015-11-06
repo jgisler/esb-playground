@@ -1,5 +1,7 @@
 package org.gislers.playgrounds.esb.service.publish.dto;
 
+import org.gislers.playgrounds.esb.common.model.ProductInfo;
+
 /**
  * Created by:   jgisle
  * Created date: 10/5/15
@@ -9,7 +11,7 @@ public class ProductInfoDto {
     private String txId;
     private String environmentName;
     private String messageVersion;
-    private String payload;
+    private ProductInfo productInfo;
 
     private ProductInfoDto() {
     }
@@ -26,9 +28,8 @@ public class ProductInfoDto {
         return messageVersion;
     }
 
-
-    public String getPayload() {
-        return payload;
+    public ProductInfo getProductInfo() {
+        return productInfo;
     }
 
     public static class Builder {
@@ -36,7 +37,7 @@ public class ProductInfoDto {
         private String txId;
         private String environmentName;
         private String messageVersion;
-        private String payload;
+        private ProductInfo productInfo;
 
         public Builder() {
         }
@@ -56,8 +57,8 @@ public class ProductInfoDto {
             return this;
         }
 
-        public Builder payload(String payload) {
-            this.payload = payload;
+        public Builder productInfo(ProductInfo productInfo) {
+            this.productInfo = productInfo;
             return this;
         }
 
@@ -66,7 +67,7 @@ public class ProductInfoDto {
             productInfoDto.environmentName = this.environmentName;
             productInfoDto.messageVersion = this.messageVersion;
             productInfoDto.txId = this.txId;
-            productInfoDto.payload = this.payload;
+            productInfoDto.productInfo = this.productInfo;
             return productInfoDto;
         }
     }

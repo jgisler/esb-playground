@@ -1,5 +1,6 @@
 package org.gislers.playgrounds.esb.service.publish.bean;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.service.publish.PublishService;
@@ -28,6 +29,8 @@ public class PublishServiceBean implements PublishService {
 
     private static final Logger logger = Logger.getLogger( PublishServiceBean.class.getSimpleName() );
 
+    private static final Gson gson = new Gson();
+
     @Resource(lookup="java:jboss/DefaultJMSConnectionFactory")
     private ConnectionFactory connectionFactory;
 
@@ -49,7 +52,7 @@ public class PublishServiceBean implements PublishService {
             MessageProducer messageProducer = session.createProducer(inboundProductQueue);
             messageProducer.setDeliveryMode(DeliveryMode.PERSISTENT);
 
-            TextMessage textMessage = session.createTextMessage(productDto.getPayload());
+            TextMessage textMessage = session.createTextMessage( gson.toJson(productDto.getProductInfo()) );
             textMessage.setStringProperty(MessageConstants.TRANSACTION_ID   , productDto.getTxId());
             textMessage.setStringProperty(MessageConstants.ENV_NAME         , productDto.getEnvironmentName());
             textMessage.setStringProperty(MessageConstants.MESSAGE_VERSION  , productDto.getMessageVersion());

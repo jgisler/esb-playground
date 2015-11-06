@@ -11,17 +11,13 @@ public class ErrorItem {
     private UUID errorId;
     private String errorDescription;
 
-    public ErrorItem(UUID errorId, String errorDescription) {
-        this.errorId = errorId;
+    public ErrorItem(String errorDescription) {
+        this.errorId = UUID.randomUUID();
         this.errorDescription = errorDescription;
     }
 
     public UUID getErrorId() {
         return errorId;
-    }
-
-    public void setErrorId(UUID errorId) {
-        this.errorId = errorId;
     }
 
     public String getErrorDescription() {

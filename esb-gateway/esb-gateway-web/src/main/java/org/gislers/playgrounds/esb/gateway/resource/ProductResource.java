@@ -1,12 +1,11 @@
 package org.gislers.playgrounds.esb.gateway.resource;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.http.HttpStatus;
 import org.gislers.playgrounds.esb.common.http.ErrorItem;
 import org.gislers.playgrounds.esb.common.http.GatewayResponse;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.model.ProductInfo;
-import org.gislers.playgrounds.esb.gateway.service.SerializationService;
 import org.gislers.playgrounds.esb.gateway.service.ValidationService;
 import org.gislers.playgrounds.esb.service.publish.PublishService;
 import org.gislers.playgrounds.esb.service.publish.dto.ProductInfoDto;
@@ -21,9 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -39,9 +36,6 @@ public class ProductResource {
     private PublishService publishService;
 
     @Inject
-    private SerializationService serializationService;
-
-    @Inject
     private ValidationService validationService;
 
     @POST
@@ -51,54 +45,35 @@ public class ProductResource {
                                     @HeaderParam(MessageConstants.ENV_NAME)         String envName,
                                     @HeaderParam(MessageConstants.MESSAGE_VERSION)  String messageVersion,
                                     ProductInfo productInfo ) {
-        Response response;
-        try {
-            ProductInfoDto productDto = new ProductInfoDto.Builder()
-                    .environmentName(envName)
-                    .messageVersion(messageVersion)
-                    .txId(txId)
-                    .payload(serializationService.toJson(productInfo))
-                    .build();
 
-            List<String> errors = validationService.validate(productDto);
-            if( !errors.isEmpty() ) {
-                response = buildErrorResponse(txId, errors, Response.Status.BAD_REQUEST);
-            }
-            else {
-                publishService.publish(productDto);
-                response = buildSuccessResponse( productDto );
-            }
-        }
-        catch( JsonProcessingException e ) {
-            response = buildErrorResponse(txId, e, Response.Status.BAD_REQUEST);
-        }
-        catch( PublishException e ) {
-            response = buildErrorResponse(txId, e, Response.Status.INTERNAL_SERVER_ERROR);
-        }
-        return response;
-    }
-
-    Response buildSuccessResponse( ProductInfoDto productDto ) {
-        GatewayResponse gatewayResponse = new GatewayResponse();
-        gatewayResponse.setTxId(productDto.getTxId());
-        return Response.accepted(gatewayResponse)
+        ProductInfoDto productDto = new ProductInfoDto.Builder()
+                .environmentName(envName)
+                .messageVersion(messageVersion)
+                .txId(txId)
+                .productInfo(productInfo)
                 .build();
-    }
 
-    Response buildErrorResponse(String txId, Throwable throwable, Response.Status status) {
-        List<String> errors = new ArrayList<>();
-        errors.add( ExceptionUtils.getRootCauseMessage(throwable) );
-        return buildErrorResponse(txId, errors, status);
-    }
+        GatewayResponse gatewayResponse = new GatewayResponse();
+        gatewayResponse.setTxId( txId );
+        gatewayResponse.setHttpStatus( HttpStatus.SC_ACCEPTED );
 
-    Response buildErrorResponse(String txId, List<String> errors, Response.Status status) {
-        GatewayResponse response = new GatewayResponse();
-        response.setTxId( txId );
-        for( String error : errors ) {
-            response.getErrorItems().add( new ErrorItem(UUID.randomUUID(), error) );
+        List<ErrorItem> errorItems = validationService.validate(productDto);
+        if( !(errorItems.isEmpty()) ) {
+            gatewayResponse.setErrorItems(errorItems);
+            gatewayResponse.setHttpStatus(HttpStatus.SC_BAD_REQUEST);
         }
-        return Response.status(status)
-                .entity( response )
+        else {
+            try {
+                publishService.publish(productDto);
+            }
+            catch (PublishException e) {
+                gatewayResponse.getErrorItems().add(new ErrorItem(ExceptionUtils.getRootCauseMessage(e)));
+                gatewayResponse.setHttpStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return Response.status(gatewayResponse.getHttpStatus())
+                .entity(gatewayResponse)
                 .build();
     }
 }

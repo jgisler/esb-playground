@@ -32,6 +32,7 @@ public class DispatchServiceBean implements DispatchService {
     @Override
     @Asynchronous
     public void dispatchMessage(DispatchServiceDto dispatchServiceDto) {
+
         String endpoint = endpointLookupService.findEndpoint(dispatchServiceDto);
         if( isBlank(endpoint) ) {
             logger.warning("Endpoint not found: " + dispatchServiceDto.toString());

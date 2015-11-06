@@ -14,7 +14,7 @@ import javax.inject.Singleton;
 public class EndpointLookupService {
 
     public String findEndpoint( DispatchServiceDto dispatchServiceDto ) {
-        StringBuilder sb = new StringBuilder("http://localhost:8080/esb-test/api/")
+        StringBuilder sb = new StringBuilder("http://10.216.138.218:8080/esb-test/api/")
                 .append(dispatchServiceDto.getClientName().name().toLowerCase()).append("/")
                 .append(dispatchServiceDto.getServiceName().name().toLowerCase()).append("/");
 

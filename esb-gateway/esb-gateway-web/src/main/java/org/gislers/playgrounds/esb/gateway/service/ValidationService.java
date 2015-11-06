@@ -1,5 +1,6 @@
 package org.gislers.playgrounds.esb.gateway.service;
 
+import org.gislers.playgrounds.esb.common.http.ErrorItem;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.service.publish.dto.ProductInfoDto;
 
@@ -18,20 +19,23 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Singleton
 public class ValidationService {
 
-    public List<String> validate(ProductInfoDto productDto) {
+    private static final String MISSING_HEADER_TEMPLATE = "Validation Error: Missing header for '%s'";
+    private static final String MISSING_PAYLOAD_TEMPLATE = "Validation Error: Payload body is missing";
 
-        List<String> errors = new ArrayList<>();
+    public List<ErrorItem> validate(ProductInfoDto productDto) {
+
+        List<ErrorItem> errors = new ArrayList<>();
 
         if( isBlank(productDto.getEnvironmentName()) ) {
-            errors.add( String.format("Validation Error: Missing header for '%s'", MessageConstants.ENV_NAME) );
+            errors.add( new ErrorItem(String.format(MISSING_HEADER_TEMPLATE, MessageConstants.ENV_NAME)) );
         }
 
         if( isBlank(productDto.getMessageVersion()) ) {
-            errors.add( String.format("Validation Error: Missing header for '%s'", MessageConstants.MESSAGE_VERSION) );
+            errors.add( new ErrorItem(String.format(MISSING_HEADER_TEMPLATE, MessageConstants.MESSAGE_VERSION)) );
         }
 
-        if( isBlank(productDto.getPayload())) {
-            errors.add( "Validation Error: Payload body is missing" );
+        if( productDto.getProductInfo() == null ) {
+            errors.add( new ErrorItem(MISSING_PAYLOAD_TEMPLATE) );
         }
 
         return errors;
