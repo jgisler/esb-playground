@@ -6,7 +6,6 @@ import org.gislers.playgrounds.esb.service.dispatch.dto.DispatchServiceDto;
 import org.gislers.playgrounds.esb.service.dispatch.exception.DispatchServiceException;
 import org.gislers.playgrounds.esb.service.dispatch.service.EndpointLookupService;
 
-import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.client.ClientBuilder;
@@ -30,7 +29,6 @@ public class DispatchServiceBean implements DispatchService {
     private EndpointLookupService endpointLookupService;
 
     @Override
-    @Asynchronous
     public void dispatchMessage(DispatchServiceDto dispatchServiceDto) {
 
         String endpoint = endpointLookupService.findEndpoint(dispatchServiceDto);

@@ -1,7 +1,6 @@
 package org.gislers.playgrounds.esb.service.dispatch;
 
 import org.gislers.playgrounds.esb.service.dispatch.dto.DispatchServiceDto;
-import org.gislers.playgrounds.esb.service.dispatch.exception.DispatchServiceException;
 
 import javax.ejb.Local;
 
@@ -12,5 +11,5 @@ import javax.ejb.Local;
 @Local
 public interface DispatchService {
 
-    void dispatchMessage( DispatchServiceDto dispatchServiceDto ) throws DispatchServiceException;
+    void dispatchMessage( DispatchServiceDto dispatchServiceDto );
 }
