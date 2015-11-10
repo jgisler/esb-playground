@@ -1,9 +1,8 @@
-package org.gislers.playgrounds.esb.service.publish.bean;
+package org.gislers.playgrounds.esb.service.publish;
 
 import com.google.gson.Gson;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
-import org.gislers.playgrounds.esb.service.publish.PublishService;
 import org.gislers.playgrounds.esb.service.publish.dto.ProductInfoDto;
 import org.gislers.playgrounds.esb.service.publish.exception.PublishException;
 
