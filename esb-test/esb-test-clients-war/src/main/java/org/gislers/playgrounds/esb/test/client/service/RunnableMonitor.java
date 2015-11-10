@@ -1,5 +1,6 @@
 package org.gislers.playgrounds.esb.test.client.service;
 
+import javax.inject.Inject;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Logger;
 
@@ -11,7 +12,8 @@ public class RunnableMonitor implements Runnable {
 
     private static final String MSG_TEMPLATE = "[poolSize=%d, activeCount=%d, completedTaskCount=%d]";
 
-    private static final Logger logger = Logger.getLogger( RunnableMonitor.class.getSimpleName() );
+    @Inject
+    private Logger logger;
 
     private int delay;
     private ThreadPoolExecutor executor;

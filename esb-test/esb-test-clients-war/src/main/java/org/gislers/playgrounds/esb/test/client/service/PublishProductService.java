@@ -8,6 +8,7 @@ import org.gislers.playgrounds.esb.test.client.entity.AuditSentEntity;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -28,9 +29,8 @@ import java.util.logging.Logger;
 @Singleton
 public class PublishProductService {
 
-    private static final String PI_ENDPOINT = "http://127.0.0.1:8080/esb-gateway/api/product";
-
-    private static final Logger logger = Logger.getLogger(PublishProductService.class.getSimpleName());
+    @Inject
+    private Logger logger;
 
     private static final int CORE_POOL_SIZE     = 10;
     private static final int MAX_POOL_SIZE      = 20;

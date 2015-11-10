@@ -25,7 +25,8 @@ import java.util.logging.Logger;
 @Path("/publish")
 public class PublishResource {
 
-    private static final Logger logger = Logger.getLogger(PublishResource.class.getSimpleName());
+    @Inject
+    private Logger logger;
 
     @Inject
     private PublishProductService publishProductService;

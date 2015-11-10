@@ -8,6 +8,7 @@ import org.gislers.playgrounds.esb.test.client.dao.AuditSentDao;
 import org.gislers.playgrounds.esb.test.client.entity.AuditReceivedEntity;
 
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -24,7 +25,8 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractResource {
 
-    private static final Logger logger = Logger.getLogger(AbstractResource.class.getSimpleName());
+    @Inject
+    private Logger logger;
 
     protected abstract String getClient();
 
