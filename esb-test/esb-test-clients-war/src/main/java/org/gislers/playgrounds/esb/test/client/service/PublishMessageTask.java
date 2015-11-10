@@ -4,6 +4,7 @@ import org.gislers.playgrounds.esb.common.http.GatewayResponse;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.model.ProductInfo;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -19,7 +20,6 @@ import java.util.concurrent.Callable;
  */
 public class PublishMessageTask implements Callable<GatewayResponse> {
 
-    private static final String PI_ENDPOINT = "http://127.0.0.1:8080/esb-gateway/api/product";
     private static final Random random = new Random();
 
     public PublishMessageTask() {
@@ -27,11 +27,12 @@ public class PublishMessageTask implements Callable<GatewayResponse> {
 
     @Override
     public GatewayResponse call() throws Exception {
+        Client client = null;
         Response response = null;
         GatewayResponse gatewayResponse = null;
         try {
-            response = ClientBuilder.newClient()
-                    .target(PI_ENDPOINT)
+            client = ClientBuilder.newClient();
+            response = client.target("http://127.0.0.1:8080/esb-gateway/api/product")
                     .request()
                     .header(MessageConstants.ENV_NAME, "jim-sim")
                     .header(MessageConstants.MESSAGE_VERSION, getRandomMessageVersion())
@@ -44,6 +45,10 @@ public class PublishMessageTask implements Callable<GatewayResponse> {
         finally {
             if( response != null ) {
                 response.close();
+            }
+
+            if( client != null ) {
+                client.close();
             }
         }
         return gatewayResponse;
