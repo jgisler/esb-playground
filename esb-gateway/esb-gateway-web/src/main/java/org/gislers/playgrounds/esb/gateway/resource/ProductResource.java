@@ -12,6 +12,7 @@ import org.gislers.playgrounds.esb.service.publish.dto.ProductInfoDto;
 import org.gislers.playgrounds.esb.service.publish.exception.PublishException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
@@ -27,6 +28,7 @@ import java.util.logging.Logger;
  * Created by jim
  * Created on 9/27/15.
  */
+@Stateless
 @Path("/product")
 public class ProductResource {
 
