@@ -29,7 +29,7 @@ public class RunnableMonitor implements Runnable {
 
     @Override
     public void run() {
-
+        logger.info( "Starting monitor thread..." );
         while( runIt ) {
             logger.info(
                 String.format(MSG_TEMPLATE,
@@ -45,5 +45,6 @@ public class RunnableMonitor implements Runnable {
                 logger.warning( e.getMessage() );
             }
         }
+        logger.info( "Monitor thread stopped..." );
     }
 }

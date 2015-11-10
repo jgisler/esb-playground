@@ -3,8 +3,6 @@ package org.gislers.playgrounds.esb.test.client.service;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpStatus;
 import org.gislers.playgrounds.esb.common.http.GatewayResponse;
-import org.gislers.playgrounds.esb.common.message.MessageConstants;
-import org.gislers.playgrounds.esb.common.model.ProductInfo;
 import org.gislers.playgrounds.esb.test.client.dao.AuditSentDao;
 import org.gislers.playgrounds.esb.test.client.entity.AuditSentEntity;
 
@@ -12,17 +10,10 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -58,10 +49,29 @@ public class PublishProductService {
     public List<String> batchSend(int batchSize) {
 
         ThreadPoolExecutor executor = threadPoolExecutor();
-
         RunnableMonitor runnableMonitor = new RunnableMonitor( 5000, executor );
         Thread monitorThread = new Thread(runnableMonitor);
-        monitorThread.start();
+
+        List<String> txIds = null;
+        try {
+            monitorThread.start();
+            txIds = submitTasks(batchSize, executor);
+        }
+        catch( Exception e ) {
+            logger.warning( ExceptionUtils.getRootCauseMessage(e) );
+        }
+        finally {
+            logger.info( "Shutting down the executor..." );
+            executor.shutdown();
+            while( !executor.isShutdown() ) {
+                snooze(1000);
+            }
+            runnableMonitor.shutdown();
+        }
+        return txIds;
+    }
+
+    private List<String> submitTasks( int batchSize, ThreadPoolExecutor executor ) {
 
         List<String> txIds = new ArrayList<>(batchSize);
 
@@ -70,10 +80,7 @@ public class PublishProductService {
 
             List<Future<GatewayResponse>> futureResponses = new ArrayList<>();
             for (int i = 0; i<CORE_POOL_SIZE && i<batchSize; i++) {
-                String msgVersion = i % 2 == 0 ? "4.0" : "2.0";
-                futureResponses.add(
-                        executor.submit( new PublishTask(msgVersion) )
-                );
+                futureResponses.add(executor.submit(new PublishMessageTask()));
                 counter++;
             }
 
@@ -83,6 +90,7 @@ public class PublishProductService {
                     if( gatewayResponse != null && HttpStatus.SC_ACCEPTED == gatewayResponse.getHttpStatus() ) {
                         if( gatewayResponse.getErrorItems().isEmpty() ) {
                             txIds.add(gatewayResponse.getTxId());
+                            auditSentDao.create(new AuditSentEntity(gatewayResponse.getTxId(), gatewayResponse.getGatewayTimestamp()));
                         } else {
                             logger.warning(gatewayResponse.toString());
                         }
@@ -94,12 +102,6 @@ public class PublishProductService {
             }
         }
 
-        logger.info( "Shutting down the executor..." );
-        executor.shutdown();
-        while( !executor.isShutdown() ) {
-            snooze(1000);
-        }
-        runnableMonitor.shutdown();
         return txIds;
     }
 
@@ -121,48 +123,5 @@ public class PublishProductService {
                 new ArrayBlockingQueue<>(MAX_POOL_SIZE),
                 Executors.defaultThreadFactory()
         );
-    }
-
-    protected class PublishTask implements Callable<GatewayResponse> {
-
-        private String messageVersion;
-
-        public PublishTask( String messageVersion ) {
-            this.messageVersion = messageVersion;
-        }
-
-        @Override
-        public GatewayResponse call() throws Exception {
-            Response response = null;
-            GatewayResponse gatewayResponse = null;
-            try {
-                response = ClientBuilder.newClient()
-                        .target(PI_ENDPOINT)
-                        .request()
-                        .header(MessageConstants.ENV_NAME, "jim-sim")
-                        .header(MessageConstants.MESSAGE_VERSION, messageVersion)
-                        .post(Entity.entity(generateProductInfo(), MediaType.APPLICATION_JSON_TYPE), Response.class);
-
-                if (response != null) {
-                    gatewayResponse = response.readEntity(GatewayResponse.class);
-                    auditSentDao.create(new AuditSentEntity(gatewayResponse.getTxId(), gatewayResponse.getGatewayTimestamp()));
-                }
-            }
-            finally {
-                if( response != null ) {
-                    response.close();
-                }
-            }
-            return gatewayResponse;
-        }
-
-        private ProductInfo generateProductInfo() {
-            ProductInfo productInfo = new ProductInfo();
-            productInfo.setId(random.nextLong());
-            productInfo.setDescription(UUID.randomUUID().toString());
-            productInfo.setName(UUID.randomUUID().toString());
-            productInfo.setUnitPrice(new BigDecimal(random.nextDouble()));
-            return productInfo;
-        }
     }
 }
