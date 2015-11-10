@@ -1,7 +1,7 @@
-package org.gislers.playgrounds.esb.consumer.product;
+package org.gislers.playgrounds.esb.consumer.mdb.product;
 
 import org.gislers.playgrounds.esb.common.message.ServiceName;
-import org.gislers.playgrounds.esb.consumer.AbstractEsbMdb;
+import org.gislers.playgrounds.esb.consumer.mdb.AbstractEsbMdb;
 
 /**
  * Created by:   jgisle

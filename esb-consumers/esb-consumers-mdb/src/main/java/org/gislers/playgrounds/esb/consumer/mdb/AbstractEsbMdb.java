@@ -1,4 +1,4 @@
-package org.gislers.playgrounds.esb.consumer;
+package org.gislers.playgrounds.esb.consumer.mdb;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.gislers.playgrounds.esb.common.message.ClientName;
@@ -32,15 +32,21 @@ public abstract class AbstractEsbMdb implements MessageListener {
     public void onMessage(Message message) {
         TextMessage textMessage = (TextMessage) message;
         try {
-            dispatchService.dispatchMessage(new DispatchServiceDto.Builder()
-                            .serviceName(getServiceName())
-                            .clientName(getConsumerName())
-                            .environmentName(textMessage.getStringProperty(MessageConstants.ENV_NAME))
-                            .messageVersion(textMessage.getStringProperty(MessageConstants.MESSAGE_VERSION))
-                            .txId(textMessage.getStringProperty(MessageConstants.TRANSACTION_ID))
-                            .payload(textMessage.getText())
-                            .build()
-            );
+
+            DispatchServiceDto dispatchServiceDto = new DispatchServiceDto.Builder()
+                    .serviceName(getServiceName())
+                    .clientName(getConsumerName())
+                    .environmentName(textMessage.getStringProperty(MessageConstants.ENV_NAME))
+                    .messageVersion(textMessage.getStringProperty(MessageConstants.MESSAGE_VERSION))
+                    .txId(textMessage.getStringProperty(MessageConstants.TRANSACTION_ID))
+                    .payload(textMessage.getText())
+                    .build();
+
+            getLogger().info( "[txId='" + dispatchServiceDto.getTxId() +
+                    "', envName='" + dispatchServiceDto.getEnvironmentName() +
+                    "', msgVer='" + dispatchServiceDto.getMessageVersion() + "']" );
+
+            dispatchService.dispatchMessage( dispatchServiceDto );
         }
         catch (JMSException e) {
             getLogger().warning(ExceptionUtils.getRootCauseMessage(e));
