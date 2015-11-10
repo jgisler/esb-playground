@@ -22,6 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -49,7 +50,7 @@ public class ProductResource {
                                     @HeaderParam(MessageConstants.MESSAGE_VERSION)  String messageVersion,
                                     ProductInfo productInfo ) {
 
-        logger.info( "[txId='" + txId + "', envName='" + envName + "', msgVer='" + messageVersion + "']" );
+        logger.log(Level.FINE, "[txId='" + txId + "', envName='" + envName + "', msgVer='" + messageVersion + "'] - Received..." );
 
         ProductInfoDto productDto = new ProductInfoDto.Builder()
                 .environmentName(envName)

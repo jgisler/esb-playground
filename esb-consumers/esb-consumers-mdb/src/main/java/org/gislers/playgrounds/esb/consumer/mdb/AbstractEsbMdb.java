@@ -13,6 +13,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -42,9 +43,9 @@ public abstract class AbstractEsbMdb implements MessageListener {
                     .payload(textMessage.getText())
                     .build();
 
-            getLogger().info( "[txId='" + dispatchServiceDto.getTxId() +
+            getLogger().log(Level.FINE, "[txId='" + dispatchServiceDto.getTxId() +
                     "', envName='" + dispatchServiceDto.getEnvironmentName() +
-                    "', msgVer='" + dispatchServiceDto.getMessageVersion() + "']" );
+                    "', msgVer='" + dispatchServiceDto.getMessageVersion() + "'] - Consumed..." );
 
             dispatchService.dispatchMessage( dispatchServiceDto );
         }
