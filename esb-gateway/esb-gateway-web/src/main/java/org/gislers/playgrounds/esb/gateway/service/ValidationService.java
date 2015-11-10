@@ -4,10 +4,12 @@ import org.gislers.playgrounds.esb.common.http.ErrorItem;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.service.publish.dto.ProductInfoDto;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -18,6 +20,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Named
 @Singleton
 public class ValidationService {
+
+    @Inject
+    private Logger logger;
 
     private static final String MISSING_HEADER_TEMPLATE = "Validation Error: Missing header for '%s'";
     private static final String MISSING_PAYLOAD_TEMPLATE = "Validation Error: Payload body is missing";

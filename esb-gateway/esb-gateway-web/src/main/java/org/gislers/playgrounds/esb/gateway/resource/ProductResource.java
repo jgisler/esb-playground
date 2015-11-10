@@ -32,7 +32,8 @@ import java.util.logging.Logger;
 @Path("/product")
 public class ProductResource {
 
-    private static final Logger logger = Logger.getLogger( ProductResource.class.getSimpleName() );
+    @Inject
+    private Logger logger;
 
     @EJB
     private PublishService publishService;
@@ -47,6 +48,8 @@ public class ProductResource {
                                     @HeaderParam(MessageConstants.ENV_NAME)         String envName,
                                     @HeaderParam(MessageConstants.MESSAGE_VERSION)  String messageVersion,
                                     ProductInfo productInfo ) {
+
+        logger.info( "[txId='" + txId + "', envName='" + envName + "', msgVer='" + messageVersion + "']" );
 
         ProductInfoDto productDto = new ProductInfoDto.Builder()
                 .environmentName(envName)
