@@ -15,21 +15,12 @@
     <artifactId>esb-gateway-ear</artifactId>
     <packaging>ear</packaging>
 
-    <properties>
-        <jms.subsystem.name>messaging</jms.subsystem.name>
-        <jms.server.name>hornetq-server</jms.server.name>
-        <jms.instance.name>default</jms.instance.name>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ear-plugin</artifactId>
                 <configuration>
-                    <finalName>${project.parent.artifactId}</finalName>
-                    <defaultJavaBundleDir>/</defaultJavaBundleDir>
-                    <skinnyWars>true</skinnyWars>
                     <modules>
                         <webModule>
                             <groupId>org.gislers.playgrounds.esb</groupId>
@@ -47,73 +38,6 @@
                     </modules>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-                <executions>
-
-                    <execution>
-                        <id>undeploy-ear</id>
-                        <goals>
-                            <goal>undeploy</goal>
-                        </goals>
-                        <phase>clean</phase>
-                        <configuration>
-                            <filename>${project.parent.artifactId}.${project.packaging}</filename>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>jms-config</id>
-                        <goals>
-                            <goal>add-resource</goal>
-                        </goals>
-                        <phase>install</phase>
-                        <configuration>
-                            <resources>
-                                <resource>
-                                    <address>subsystem=${jms.subsystem.name},${jms.server.name}=${jms.instance.name},jms-queue=InboundProductQueue</address>
-                                    <properties>
-                                        <durable>true</durable>
-                                        <entries>!!["java:/jms/queue/InboundProductQueue"]</entries>
-                                    </properties>
-                                </resource>
-                                <resource>
-                                    <address>subsystem=${jms.subsystem.name},${jms.server.name}=${jms.instance.name},jms-topic=OutboundV3ProductTopic</address>
-                                    <properties>
-                                        <durable>true</durable>
-                                        <entries>!!["java:/jms/topic/OutboundV3ProductTopic"]</entries>
-                                    </properties>
-                                </resource>
-                                <resource>
-                                    <address>subsystem=${jms.subsystem.name},${jms.server.name}=${jms.instance.name},jms-topic=OutboundV4ProductTopic</address>
-                                    <properties>
-                                        <durable>true</durable>
-                                        <entries>!!["java:/jms/topic/OutboundV4ProductTopic"]</entries>
-                                    </properties>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>deploy-ear</id>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                        <phase>install</phase>
-                        <configuration>
-                            <filename>${project.parent.artifactId}.${project.packaging}</filename>
-                        </configuration>
-                    </execution>
-
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 
@@ -127,19 +51,28 @@
 
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
-            <artifactId>esb-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.gislers.playgrounds.esb</groupId>
             <artifactId>esb-publish-service</artifactId>
             <type>ejb</type>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
+            <groupId>org.gislers.playgrounds.esb</groupId>
+            <artifactId>esb-common</artifactId>
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>wildfly-install</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

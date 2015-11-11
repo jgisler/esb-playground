@@ -19,14 +19,14 @@
 
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
-            <artifactId>esb-common</artifactId>
+            <artifactId>esb-dispatch-service</artifactId>
+            <type>ejb</type>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
-            <artifactId>esb-dispatch-service</artifactId>
-            <type>ejb</type>
+            <artifactId>esb-common</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -54,6 +54,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
-
 </project>

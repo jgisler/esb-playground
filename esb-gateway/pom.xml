@@ -20,4 +20,24 @@
         <module>esb-gateway-ear</module>
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>org.gislers.playgrounds.esb</groupId>
+                <artifactId>esb-gateway-web</artifactId>
+                <version>${project.version}</version>
+                <type>war</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gislers.playgrounds.esb</groupId>
+                <artifactId>esb-publish-service</artifactId>
+                <version>${project.version}</version>
+                <type>ejb</type>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
 </project>
