@@ -1,0 +1,24 @@
+# Batch script to add the JMS configuration to the JBoss server
+# Start batching commands
+batch
+
+# Configure the Datasource
+data-source add --name=EsbDS \
+                --connection-url=jdbc:h2:mem:esb_db;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1 \
+                --jndi-name=java:/ds/EsbDs \
+                --enabled=true \
+                --driver-name=h2 \
+                --use-ccm=true \
+                --user-name=sa \
+                --password=sa \
+                --min-pool-size=10 \
+                --max-pool-size=20
+
+# Configure the JMS queues
+jms-queue add --queue-address=InboundProductQueue --durable=true --entries=java:/jms/queue/InboundProductQueue
+jms-topic add --topic-address=OutboundV3ProductTopic --entries=java:/jms/topic/OutboundV3ProductTopic
+jms-topic add --topic-address=OutboundV4ProductTopic --entries=java:/jms/topic/OutboundV4ProductTopic
+
+# Run the batch commands
+run-batch
+:reload
