@@ -76,6 +76,7 @@
                     <version>${maven.ejb.plugin.version}</version>
                     <configuration>
                         <ejbVersion>${ejb.spec.version}</ejbVersion>
+                        <generateClient>true</generateClient>
                     </configuration>
                 </plugin>
 
