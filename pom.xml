@@ -226,7 +226,7 @@
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
                 <artifactId>esb-consumers-mdb</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${project.version}</version>
                 <type>jar</type>
             </dependency>
 
@@ -234,7 +234,7 @@
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
                 <artifactId>esb-dispatch-service</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
 
