@@ -80,7 +80,7 @@
 
     <profiles>
         <profile>
-            <id>wildfly-install</id>
+            <id>wildfly-deploy</id>
             <build>
                 <plugins>
                     <plugin>

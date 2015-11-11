@@ -49,8 +49,6 @@
         <cdi.unit.version>3.1.3</cdi.unit.version>
         <resteasy.version>3.0.11.Final</resteasy.version>
 
-
-
         <!--EJB spec version-->
         <ejb.spec.version>3.2</ejb.spec.version>
 
@@ -128,6 +126,16 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven.surefire.plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.wildfly.plugins</groupId>
+                    <artifactId>wildfly-maven-plugin</artifactId>
+                    <version>${wildfly.maven.plugin.version}</version>
+                    <configuration>
+                        <username>${wildfly.admin.username}</username>
+                        <password>${wildfly.admin.password}</password>
+                    </configuration>
                 </plugin>
 
             </plugins>
@@ -286,97 +294,39 @@
     </dependencyManagement>
 
     <profiles>
+
+        <!--
+          This profile will config the JMS Queues/Topics and the datasources
+        -->
         <profile>
             <id>wildfly-config</id>
-
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
-
-            <properties>
-                <jms.subsystem.name>messaging</jms.subsystem.name>
-                <jms.server.name>hornetq-server</jms.server.name>
-                <jms.instance.name>default</jms.instance.name>
-            </properties>
-
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
-                        <version>${wildfly.maven.plugin.version}</version>
+                        <inherited>false</inherited>
                         <configuration>
-                            <skip>false</skip>
-                            <username>${wildfly.admin.username}</username>
-                            <password>${wildfly.admin.password}</password>
+                            <execute-commands>
+                                <batch>false</batch>
+                                <scripts>
+                                    <script>${basedir}/src/main/resources/wildfly/add-resources.cli</script>
+                                </scripts>
+                            </execute-commands>
                         </configuration>
-
-                        <executions>
-                            <execution>
-                                <id>jms-config</id>
-                                <goals>
-                                    <goal>add-resource</goal>
-                                </goals>
-                                <configuration>
-                                    <resources>
-                                        <resource>
-                                            <address>subsystem=${jms.subsystem.name},${jms.server.name}=${jms.instance.name},jms-queue=InboundProductQueue</address>
-                                            <properties>
-                                                <durable>true</durable>
-                                                <entries>!!["java:/jms/queue/InboundProductQueue"]</entries>
-                                            </properties>
-                                        </resource>
-                                        <resource>
-                                            <address>subsystem=${jms.subsystem.name},${jms.server.name}=${jms.instance.name},jms-topic=OutboundV3ProductTopic</address>
-                                            <properties>
-                                                <durable>true</durable>
-                                                <entries>!!["java:/jms/topic/OutboundV3ProductTopic"]</entries>
-                                            </properties>
-                                        </resource>
-                                        <resource>
-                                            <address>subsystem=${jms.subsystem.name},${jms.server.name}=${jms.instance.name},jms-topic=OutboundV4ProductTopic</address>
-                                            <properties>
-                                                <durable>true</durable>
-                                                <entries>!!["java:/jms/topic/OutboundV4ProductTopic"]</entries>
-                                            </properties>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-
-                            <execution>
-                                <id>add-datasource</id>
-                                <goals>
-                                    <goal>add-resource</goal>
-                                </goals>
-                                <configuration>
-                                    <address>subsystem=datasources,data-source=EsbDS</address>
-                                    <resources>
-                                        <resource>
-                                            <properties>
-                                                <connection-url>jdbc:h2:mem:esb_db;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1</connection-url>
-                                                <jndi-name>java:/ds/EsbDs</jndi-name>
-                                                <enable>true</enable>
-                                                <user-name>sa</user-name>
-                                                <password>sa</password>
-                                                <driver-name>h2</driver-name>
-                                                <use-ccm>false</use-ccm>
-                                            </properties>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-
                     </plugin>
                 </plugins>
             </build>
-
-
         </profile>
 
+        <!--
+          This profile will deploy the project to Wildfly
+        -->
         <profile>
-            <id>wildfly-install</id>
+            <id>wildfly-deploy</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -386,14 +336,8 @@
                         <plugin>
                             <groupId>org.wildfly.plugins</groupId>
                             <artifactId>wildfly-maven-plugin</artifactId>
-                            <version>${wildfly.maven.plugin.version}</version>
-                            <configuration>
-                                <skip>false</skip>
-                                <username>${wildfly.admin.username}</username>
-                                <password>${wildfly.admin.password}</password>
-                            </configuration>
+                            <inherited>true</inherited>
                             <executions>
-
                                 <execution>
                                     <id>undeploy-ears</id>
                                     <goals>
@@ -404,7 +348,6 @@
                                         <filename>${project.artifactId}.ear</filename>
                                     </configuration>
                                 </execution>
-
                                 <execution>
                                     <id>deploy-ear</id>
                                     <goals>
@@ -415,7 +358,6 @@
                                         <filename>${project.artifactId}.ear</filename>
                                     </configuration>
                                 </execution>
-
                             </executions>
                         </plugin>
                     </plugins>
