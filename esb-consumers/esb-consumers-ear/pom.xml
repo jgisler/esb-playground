@@ -16,21 +16,17 @@
     <packaging>ear</packaging>
 
     <build>
+        <finalName>${project.parent.artifactId}</finalName>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ear-plugin</artifactId>
                 <configuration>
                     <modules>
-                        <jarModule>
+                        <ejbModule>
                             <groupId>org.gislers.playgrounds.esb</groupId>
                             <artifactId>esb-consumers-mdb</artifactId>
-                        </jarModule>
-                        <ejbClientModule>
-                            <groupId>org.gislers.playgrounds.esb</groupId>
-                            <artifactId>esb-dispatch-service-ejb</artifactId>
-                        </ejbClientModule>
+                        </ejbModule>
                         <jarModule>
                             <groupId>org.gislers.playgrounds.esb</groupId>
                             <artifactId>esb-common</artifactId>
@@ -38,7 +34,6 @@
                     </modules>
                 </configuration>
             </plugin>
-            
         </plugins>
     </build>
 
@@ -47,12 +42,7 @@
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
             <artifactId>esb-consumers-mdb</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.gislers.playgrounds.esb</groupId>
-            <artifactId>esb-dispatch-service-ejb</artifactId>
-            <type>ejb-client</type>
+            <type>ejb</type>
         </dependency>
 
         <dependency>

@@ -13,16 +13,9 @@
     </parent>
 
     <artifactId>esb-consumers-mdb</artifactId>
-    <packaging>jar</packaging>
+    <packaging>ejb</packaging>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.gislers.playgrounds.esb</groupId>
-            <artifactId>esb-dispatch-service-ejb</artifactId>
-            <type>ejb-client</type>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>

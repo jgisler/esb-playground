@@ -6,13 +6,14 @@ import org.gislers.playgrounds.esb.common.http.ErrorItem;
 import org.gislers.playgrounds.esb.common.http.GatewayResponse;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.model.ProductInfo;
-import org.gislers.playgrounds.esb.gateway.service.PublishServiceClient;
-import org.gislers.playgrounds.esb.gateway.service.ValidationService;
-import org.gislers.playgrounds.esb.service.publish.dto.ProductInfoDto;
-import org.gislers.playgrounds.esb.service.publish.exception.PublishException;
+import org.gislers.playgrounds.esb.gateway.dto.ProductInfoDto;
+import org.gislers.playgrounds.esb.gateway.ejb.MessageValidationEjb;
+import org.gislers.playgrounds.esb.gateway.ejb.PublishProductEjb;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.jms.JMSException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -21,7 +22,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -35,11 +35,11 @@ public class ProductResource {
     @Inject
     private Logger logger;
 
-    @Inject
-    private PublishServiceClient publishServiceClient;
+    @EJB
+    private PublishProductEjb publishProductEjb;
 
-    @Inject
-    private ValidationService validationService;
+    @EJB
+    private MessageValidationEjb messageValidationEjb;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -48,8 +48,6 @@ public class ProductResource {
                                     @HeaderParam(MessageConstants.ENV_NAME)         String envName,
                                     @HeaderParam(MessageConstants.MESSAGE_VERSION)  String messageVersion,
                                     ProductInfo productInfo ) {
-
-        logger.log(Level.FINE, "[txId='" + txId + "', envName='" + envName + "', msgVer='" + messageVersion + "'] - Received..." );
 
         ProductInfoDto productDto = new ProductInfoDto.Builder()
                 .environmentName(envName)
@@ -62,21 +60,22 @@ public class ProductResource {
         gatewayResponse.setTxId( txId );
         gatewayResponse.setHttpStatus( HttpStatus.SC_ACCEPTED );
 
-        List<ErrorItem> errorItems = validationService.validate(productDto);
+        List<ErrorItem> errorItems = messageValidationEjb.validate(productDto);
         if( !(errorItems.isEmpty()) ) {
             gatewayResponse.setErrorItems(errorItems);
             gatewayResponse.setHttpStatus(HttpStatus.SC_BAD_REQUEST);
         }
         else {
             try {
-                publishServiceClient.publish(productDto);
+                publishProductEjb.publishProduct(productDto);
             }
-            catch (PublishException e) {
+            catch(JMSException e) {
                 gatewayResponse.getErrorItems().add(new ErrorItem(ExceptionUtils.getRootCauseMessage(e)));
                 gatewayResponse.setHttpStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             }
         }
 
+        logger.exiting( this.getClass().getName(), "publishProduct" );
         return Response.status(gatewayResponse.getHttpStatus())
                 .entity(gatewayResponse)
                 .build();

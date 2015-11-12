@@ -17,7 +17,7 @@
 
     <modules>
         <module>esb-test-clients-ear</module>
-        <module>esb-test-clients-war</module>
+        <module>esb-test-clients-web</module>
     </modules>
 
     <dependencyManagement>
@@ -25,7 +25,7 @@
 
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
-                <artifactId>esb-test-clients-war</artifactId>
+                <artifactId>esb-test-clients-web</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>

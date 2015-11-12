@@ -20,9 +20,12 @@
         <module>esb-gateway-ear</module>
     </modules>
 
+    <properties>
+        <gson.version>2.4</gson.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
                 <artifactId>esb-gateway-web</artifactId>
@@ -30,13 +33,12 @@
                 <type>war</type>
             </dependency>
 
+            <!-- JSON serializer -->
             <dependency>
-                <groupId>org.gislers.playgrounds.esb</groupId>
-                <artifactId>esb-publish-service-ejb</artifactId>
-                <version>${project.version}</version>
-                <type>ejb-client</type>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 

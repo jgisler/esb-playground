@@ -16,6 +16,7 @@
     <packaging>ear</packaging>
 
     <build>
+        <finalName>${project.parent.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -27,10 +28,6 @@
                             <artifactId>esb-gateway-web</artifactId>
                             <contextRoot>/esb-gateway</contextRoot>
                         </webModule>
-                        <ejbClientModule>
-                            <groupId>org.gislers.playgrounds.esb</groupId>
-                            <artifactId>esb-publish-service-ejb</artifactId>
-                        </ejbClientModule>
                         <jarModule>
                             <groupId>org.gislers.playgrounds.esb</groupId>
                             <artifactId>esb-common</artifactId>
@@ -42,17 +39,16 @@
     </build>
 
     <dependencies>
-
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
             <artifactId>esb-gateway-web</artifactId>
             <type>war</type>
         </dependency>
 
+        <!-- JSON serializer -->
         <dependency>
-            <groupId>org.gislers.playgrounds.esb</groupId>
-            <artifactId>esb-publish-service-ejb</artifactId>
-            <type>ejb-client</type>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
         </dependency>
 
         <dependency>
@@ -64,7 +60,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-
     </dependencies>
 
     <profiles>

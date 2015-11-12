@@ -4,16 +4,15 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.gislers.playgrounds.esb.common.message.ClientName;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.message.ServiceName;
+import org.gislers.playgrounds.esb.consumer.dto.DispatchServiceDto;
+import org.gislers.playgrounds.esb.consumer.ejb.DispatchMessageEjb;
 import org.gislers.playgrounds.esb.consumer.exception.EsbConsumerException;
-import org.gislers.playgrounds.esb.consumer.service.DispatchServiceClient;
-import org.gislers.playgrounds.esb.service.dispatch.dto.DispatchServiceDto;
 
-import javax.inject.Inject;
+import javax.ejb.EJB;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -26,14 +25,13 @@ public abstract class AbstractEsbMdb implements MessageListener {
     protected abstract ServiceName  getServiceName();
     protected abstract ClientName   getConsumerName();
 
-    @Inject
-    protected DispatchServiceClient dispatchServiceClient;
+    @EJB
+    protected DispatchMessageEjb dispatchMessageEjb;
 
     @Override
     public void onMessage(Message message) {
         TextMessage textMessage = (TextMessage) message;
         try {
-
             DispatchServiceDto dispatchServiceDto = new DispatchServiceDto.Builder()
                     .serviceName(getServiceName())
                     .clientName(getConsumerName())
@@ -43,11 +41,7 @@ public abstract class AbstractEsbMdb implements MessageListener {
                     .payload(textMessage.getText())
                     .build();
 
-            getLogger().log(Level.FINE, "[txId='" + dispatchServiceDto.getTxId() +
-                    "', envName='" + dispatchServiceDto.getEnvironmentName() +
-                    "', msgVer='" + dispatchServiceDto.getMessageVersion() + "'] - Consumed..." );
-
-            dispatchServiceClient.dispatch( dispatchServiceDto );
+            dispatchMessageEjb.dispatchMessage(dispatchServiceDto);
         }
         catch (JMSException e) {
             getLogger().warning(ExceptionUtils.getRootCauseMessage(e));

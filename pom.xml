@@ -12,7 +12,6 @@
 
     <modules>
         <module>esb-common</module>
-        <module>esb-services</module>
         <module>esb-gateway</module>
         <module>esb-consumers</module>
         <module>esb-test</module>
@@ -108,7 +107,6 @@
                     <artifactId>maven-ear-plugin</artifactId>
                     <version>${maven.ear.plugin.version}</version>
                     <configuration>
-                        <finalName>${project.artifactId}</finalName>
                         <version>7</version>
                         <skinnyWars>true</skinnyWars>
                         <fileNameMapping>no-version</fileNameMapping>
@@ -345,7 +343,7 @@
                                     </goals>
                                     <phase>clean</phase>
                                     <configuration>
-                                        <filename>${project.artifactId}.${project.packaging}</filename>
+                                        <filename>${project.parent.artifactId}.${project.packaging}</filename>
                                     </configuration>
                                 </execution>
                                 <execution>
@@ -355,7 +353,7 @@
                                     </goals>
                                     <phase>install</phase>
                                     <configuration>
-                                        <filename>${project.artifactId}.${project.packaging}</filename>
+                                        <filename>${project.parent.artifactId}.${project.packaging}</filename>
                                     </configuration>
                                 </execution>
                             </executions>

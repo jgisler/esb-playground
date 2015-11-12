@@ -32,14 +32,7 @@
                 <groupId>org.gislers.playgrounds.esb</groupId>
                 <artifactId>esb-consumers-mdb</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-
-            <!--EJB modules-->
-            <dependency>
-                <groupId>org.gislers.playgrounds.esb</groupId>
-                <artifactId>esb-dispatch-service-ejb</artifactId>
-                <version>${project.version}</version>
-                <type>ejb-client</type>
+                <type>ejb</type>
             </dependency>
 
             <!--Camel-->
