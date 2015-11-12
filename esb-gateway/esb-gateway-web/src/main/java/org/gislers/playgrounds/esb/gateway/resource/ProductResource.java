@@ -75,7 +75,6 @@ public class ProductResource {
             }
         }
 
-        logger.exiting( this.getClass().getName(), "publishProduct" );
         return Response.status(gatewayResponse.getHttpStatus())
                 .entity(gatewayResponse)
                 .build();
