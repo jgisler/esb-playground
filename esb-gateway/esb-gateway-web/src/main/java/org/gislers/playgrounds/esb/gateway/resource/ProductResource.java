@@ -6,12 +6,11 @@ import org.gislers.playgrounds.esb.common.http.ErrorItem;
 import org.gislers.playgrounds.esb.common.http.GatewayResponse;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.model.ProductInfo;
+import org.gislers.playgrounds.esb.gateway.service.PublishServiceClient;
 import org.gislers.playgrounds.esb.gateway.service.ValidationService;
-import org.gislers.playgrounds.esb.service.publish.PublishService;
 import org.gislers.playgrounds.esb.service.publish.dto.ProductInfoDto;
 import org.gislers.playgrounds.esb.service.publish.exception.PublishException;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -36,8 +35,8 @@ public class ProductResource {
     @Inject
     private Logger logger;
 
-    @EJB
-    private PublishService publishService;
+    @Inject
+    private PublishServiceClient publishServiceClient;
 
     @Inject
     private ValidationService validationService;
@@ -70,7 +69,7 @@ public class ProductResource {
         }
         else {
             try {
-                publishService.publish(productDto);
+                publishServiceClient.publish(productDto);
             }
             catch (PublishException e) {
                 gatewayResponse.getErrorItems().add(new ErrorItem(ExceptionUtils.getRootCauseMessage(e)));

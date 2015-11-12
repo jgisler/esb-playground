@@ -13,19 +13,22 @@
     </parent>
 
     <artifactId>esb-dispatch-service</artifactId>
-    <packaging>ejb</packaging>
+    <packaging>pom</packaging>
 
-    <dependencies>
+    <modules>
+        <module>esb-dispatch-service-ear</module>
+        <module>esb-dispatch-service-ejb</module>
+    </modules>
 
-        <dependency>
-            <groupId>org.gislers.playgrounds.esb</groupId>
-            <artifactId>esb-common</artifactId>
-        </dependency>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.gislers.playgrounds.esb</groupId>
+                <artifactId>esb-dispatch-service-ejb</artifactId>
+                <version>${project.version}</version>
+                <type>ejb</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-    </dependencies>
 </project>

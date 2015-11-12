@@ -32,9 +32,9 @@
 
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
-                <artifactId>esb-publish-service</artifactId>
+                <artifactId>esb-publish-service-ejb</artifactId>
                 <version>${project.version}</version>
-                <type>ejb</type>
+                <type>ejb-client</type>
             </dependency>
 
         </dependencies>

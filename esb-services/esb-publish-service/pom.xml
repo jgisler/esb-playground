@@ -13,25 +13,35 @@
     </parent>
 
     <artifactId>esb-publish-service</artifactId>
-    <packaging>ejb</packaging>
+    <packaging>pom</packaging>
 
-    <dependencies>
+    <modules>
+        <module>esb-publish-service-ejb</module>
+        <module>esb-publish-service-ear</module>
+    </modules>
 
-        <dependency>
-            <groupId>org.gislers.playgrounds.esb</groupId>
-            <artifactId>esb-common</artifactId>
-        </dependency>
+    <properties>
+        <gson.version>2.4</gson.version>
+    </properties>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
+    <dependencyManagement>
+        <dependencies>
 
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
+            <dependency>
+                <groupId>org.gislers.playgrounds.esb</groupId>
+                <artifactId>esb-publish-service-ejb</artifactId>
+                <version>${project.version}</version>
+                <type>ejb</type>
+            </dependency>
 
-    </dependencies>
+            <!-- JSON serializer -->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
 
 </project>

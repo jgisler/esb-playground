@@ -5,10 +5,10 @@ import org.gislers.playgrounds.esb.common.message.ClientName;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.message.ServiceName;
 import org.gislers.playgrounds.esb.consumer.exception.EsbConsumerException;
-import org.gislers.playgrounds.esb.service.dispatch.DispatchService;
+import org.gislers.playgrounds.esb.consumer.service.DispatchServiceClient;
 import org.gislers.playgrounds.esb.service.dispatch.dto.DispatchServiceDto;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -26,8 +26,8 @@ public abstract class AbstractEsbMdb implements MessageListener {
     protected abstract ServiceName  getServiceName();
     protected abstract ClientName   getConsumerName();
 
-    @EJB
-    protected DispatchService dispatchService;
+    @Inject
+    protected DispatchServiceClient dispatchServiceClient;
 
     @Override
     public void onMessage(Message message) {
@@ -47,7 +47,7 @@ public abstract class AbstractEsbMdb implements MessageListener {
                     "', envName='" + dispatchServiceDto.getEnvironmentName() +
                     "', msgVer='" + dispatchServiceDto.getMessageVersion() + "'] - Consumed..." );
 
-            dispatchService.dispatchMessage( dispatchServiceDto );
+            dispatchServiceClient.dispatch( dispatchServiceDto );
         }
         catch (JMSException e) {
             getLogger().warning(ExceptionUtils.getRootCauseMessage(e));

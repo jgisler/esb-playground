@@ -345,7 +345,7 @@
                                     </goals>
                                     <phase>clean</phase>
                                     <configuration>
-                                        <filename>${project.artifactId}.ear</filename>
+                                        <filename>${project.artifactId}.${project.packaging}</filename>
                                     </configuration>
                                 </execution>
                                 <execution>
@@ -355,7 +355,7 @@
                                     </goals>
                                     <phase>install</phase>
                                     <configuration>
-                                        <filename>${project.artifactId}.ear</filename>
+                                        <filename>${project.artifactId}.${project.packaging}</filename>
                                     </configuration>
                                 </execution>
                             </executions>

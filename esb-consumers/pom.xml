@@ -37,9 +37,9 @@
             <!--EJB modules-->
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
-                <artifactId>esb-dispatch-service</artifactId>
+                <artifactId>esb-dispatch-service-ejb</artifactId>
                 <version>${project.version}</version>
-                <type>ejb</type>
+                <type>ejb-client</type>
             </dependency>
 
             <!--Camel-->
