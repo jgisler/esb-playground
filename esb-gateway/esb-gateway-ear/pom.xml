@@ -28,6 +28,10 @@
                             <artifactId>esb-gateway-web</artifactId>
                             <contextRoot>/esb-gateway</contextRoot>
                         </webModule>
+                        <ejbModule>
+                            <groupId>org.gislers.playgrounds.esb</groupId>
+                            <artifactId>esb-gateway-ejb</artifactId>
+                        </ejbModule>
                         <jarModule>
                             <groupId>org.gislers.playgrounds.esb</groupId>
                             <artifactId>esb-common</artifactId>
@@ -45,10 +49,10 @@
             <type>war</type>
         </dependency>
 
-        <!-- JSON serializer -->
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
+            <groupId>org.gislers.playgrounds.esb</groupId>
+            <artifactId>esb-gateway-ejb</artifactId>
+            <type>ejb</type>
         </dependency>
 
         <dependency>
@@ -59,6 +63,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <!-- JSON serializer -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
         </dependency>
     </dependencies>
 

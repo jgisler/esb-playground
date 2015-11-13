@@ -27,6 +27,10 @@
                             <groupId>org.gislers.playgrounds.esb</groupId>
                             <artifactId>esb-consumers-mdb</artifactId>
                         </ejbModule>
+                        <ejbModule>
+                            <groupId>org.gislers.playgrounds.esb</groupId>
+                            <artifactId>esb-consumers-ejb</artifactId>
+                        </ejbModule>
                         <jarModule>
                             <groupId>org.gislers.playgrounds.esb</groupId>
                             <artifactId>esb-common</artifactId>
@@ -42,6 +46,12 @@
         <dependency>
             <groupId>org.gislers.playgrounds.esb</groupId>
             <artifactId>esb-consumers-mdb</artifactId>
+            <type>ejb</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.gislers.playgrounds.esb</groupId>
+            <artifactId>esb-consumers-ejb</artifactId>
             <type>ejb</type>
         </dependency>
 

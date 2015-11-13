@@ -1,14 +1,16 @@
-package org.gislers.playgrounds.esb.consumer;
+package org.gislers.playgrounds.esb.common;
 
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import java.util.logging.Logger;
 
 /**
  * Created by:   jgisle
- * Created date: 11/10/15
+ * Created date: 11/12/15
  */
-public class Resources {
+@Default
+public class Resource {
 
     @Produces
     public Logger logger(InjectionPoint injectionPoint) {

@@ -6,14 +6,14 @@ import org.gislers.playgrounds.esb.common.http.ErrorItem;
 import org.gislers.playgrounds.esb.common.http.GatewayResponse;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.model.ProductInfo;
-import org.gislers.playgrounds.esb.gateway.dto.ProductInfoDto;
-import org.gislers.playgrounds.esb.gateway.ejb.MessageValidationEjb;
-import org.gislers.playgrounds.esb.gateway.ejb.PublishProductEjb;
+import org.gislers.playgrounds.esb.gateway.ejb.publish.PublishProduct;
+import org.gislers.playgrounds.esb.gateway.ejb.publish.dto.PublishProductDto;
+import org.gislers.playgrounds.esb.gateway.ejb.publish.exception.PublishProductException;
+import org.gislers.playgrounds.esb.gateway.service.ValidationService;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.jms.JMSException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -35,11 +35,11 @@ public class ProductResource {
     @Inject
     private Logger logger;
 
-    @EJB
-    private PublishProductEjb publishProductEjb;
+    @Inject
+    private ValidationService validationService;
 
     @EJB
-    private MessageValidationEjb messageValidationEjb;
+    private PublishProduct productPublisher;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -49,7 +49,7 @@ public class ProductResource {
                                     @HeaderParam(MessageConstants.MESSAGE_VERSION)  String messageVersion,
                                     ProductInfo productInfo ) {
 
-        ProductInfoDto productDto = new ProductInfoDto.Builder()
+        PublishProductDto productDto = new PublishProductDto.Builder()
                 .environmentName(envName)
                 .messageVersion(messageVersion)
                 .txId(txId)
@@ -60,16 +60,16 @@ public class ProductResource {
         gatewayResponse.setTxId( txId );
         gatewayResponse.setHttpStatus( HttpStatus.SC_ACCEPTED );
 
-        List<ErrorItem> errorItems = messageValidationEjb.validate(productDto);
+        List<ErrorItem> errorItems = validationService.validate(productDto);
         if( !(errorItems.isEmpty()) ) {
             gatewayResponse.setErrorItems(errorItems);
             gatewayResponse.setHttpStatus(HttpStatus.SC_BAD_REQUEST);
         }
         else {
             try {
-                publishProductEjb.publishProduct(productDto);
+                productPublisher.publishProduct(productDto);
             }
-            catch(JMSException e) {
+            catch(PublishProductException e) {
                 gatewayResponse.getErrorItems().add(new ErrorItem(ExceptionUtils.getRootCauseMessage(e)));
                 gatewayResponse.setHttpStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             }

@@ -4,12 +4,12 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.gislers.playgrounds.esb.common.message.ClientName;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.message.ServiceName;
-import org.gislers.playgrounds.esb.consumer.dto.DispatchServiceDto;
-import org.gislers.playgrounds.esb.consumer.ejb.DispatchMessageEjb;
+import org.gislers.playgrounds.esb.consumer.ejb.dispatch.DispatchMessage;
+import org.gislers.playgrounds.esb.consumer.ejb.dispatch.dto.DispatchDto;
+import org.gislers.playgrounds.esb.consumer.ejb.dispatch.exception.DispatchMessageException;
 import org.gislers.playgrounds.esb.consumer.exception.EsbConsumerException;
 
 import javax.ejb.EJB;
-import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
@@ -26,13 +26,13 @@ public abstract class AbstractEsbMdb implements MessageListener {
     protected abstract ClientName   getConsumerName();
 
     @EJB
-    protected DispatchMessageEjb dispatchMessageEjb;
+    protected DispatchMessage dispatchMessage;
 
     @Override
     public void onMessage(Message message) {
         TextMessage textMessage = (TextMessage) message;
         try {
-            DispatchServiceDto dispatchServiceDto = new DispatchServiceDto.Builder()
+            DispatchDto dispatchServiceDto = new DispatchDto.Builder()
                     .serviceName(getServiceName())
                     .clientName(getConsumerName())
                     .environmentName(textMessage.getStringProperty(MessageConstants.ENV_NAME))
@@ -41,9 +41,9 @@ public abstract class AbstractEsbMdb implements MessageListener {
                     .payload(textMessage.getText())
                     .build();
 
-            dispatchMessageEjb.dispatchMessage(dispatchServiceDto);
+            dispatchMessage.dispatchMessage(dispatchServiceDto);
         }
-        catch (JMSException e) {
+        catch( Exception e ) {
             getLogger().warning(ExceptionUtils.getRootCauseMessage(e));
             throw new EsbConsumerException(e);
         }

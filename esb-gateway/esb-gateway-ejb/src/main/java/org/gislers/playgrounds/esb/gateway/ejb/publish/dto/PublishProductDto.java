@@ -1,4 +1,4 @@
-package org.gislers.playgrounds.esb.gateway.dto;
+package org.gislers.playgrounds.esb.gateway.ejb.publish.dto;
 
 import org.gislers.playgrounds.esb.common.model.ProductInfo;
 
@@ -8,14 +8,14 @@ import java.io.Serializable;
  * Created by:   jgisle
  * Created date: 10/5/15
  */
-public class ProductInfoDto implements Serializable {
+public class PublishProductDto implements Serializable {
 
     private String txId;
     private String environmentName;
     private String messageVersion;
     private ProductInfo productInfo;
 
-    private ProductInfoDto() {
+    private PublishProductDto() {
     }
 
     public String getTxId() {
@@ -64,8 +64,8 @@ public class ProductInfoDto implements Serializable {
             return this;
         }
 
-        public ProductInfoDto build() {
-            ProductInfoDto productInfoDto = new ProductInfoDto();
+        public PublishProductDto build() {
+            PublishProductDto productInfoDto = new PublishProductDto();
             productInfoDto.environmentName = this.environmentName;
             productInfoDto.messageVersion = this.messageVersion;
             productInfoDto.txId = this.txId;

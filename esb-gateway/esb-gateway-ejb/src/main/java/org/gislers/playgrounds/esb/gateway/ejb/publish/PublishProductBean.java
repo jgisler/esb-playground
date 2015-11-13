@@ -1,10 +1,11 @@
-package org.gislers.playgrounds.esb.gateway.ejb;
+package org.gislers.playgrounds.esb.gateway.ejb.publish;
 
 import com.google.gson.Gson;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
 import org.gislers.playgrounds.esb.common.model.ProductInfo;
-import org.gislers.playgrounds.esb.gateway.dto.ProductInfoDto;
+import org.gislers.playgrounds.esb.gateway.ejb.publish.dto.PublishProductDto;
+import org.gislers.playgrounds.esb.gateway.ejb.publish.exception.PublishProductException;
 
 import javax.annotation.Resource;
 import javax.ejb.Local;
@@ -26,7 +27,7 @@ import java.util.logging.Logger;
  */
 @Local
 @Stateless
-public class PublishProductEjb {
+public class PublishProductBean implements PublishProduct {
 
     @Inject
     private Logger logger;
@@ -37,7 +38,7 @@ public class PublishProductEjb {
     @Resource(lookup="java:/jms/queue/InboundProductQueue")
     private Queue inboundProductQueue;
 
-    public void publishProduct( final ProductInfoDto productDto) throws JMSException {
+    public void publishProduct( final PublishProductDto productDto) throws PublishProductException {
         Connection connection = null;
         Session session = null;
         try {
@@ -55,6 +56,9 @@ public class PublishProductEjb {
             textMessage.setStringProperty(MessageConstants.MESSAGE_VERSION, productDto.getMessageVersion());
 
             messageProducer.send(textMessage);
+        }
+        catch( JMSException e ) {
+            throw new PublishProductException(e);
         }
         finally {
             if (session != null) {

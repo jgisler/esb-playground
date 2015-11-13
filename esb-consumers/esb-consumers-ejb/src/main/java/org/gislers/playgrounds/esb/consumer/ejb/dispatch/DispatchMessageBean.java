@@ -1,12 +1,13 @@
-package org.gislers.playgrounds.esb.consumer.ejb;
+package org.gislers.playgrounds.esb.consumer.ejb.dispatch;
 
 import org.gislers.playgrounds.esb.common.message.MessageConstants;
-import org.gislers.playgrounds.esb.consumer.dto.DispatchServiceDto;
-import org.gislers.playgrounds.esb.consumer.exception.EsbConsumerException;
+import org.gislers.playgrounds.esb.consumer.ejb.dispatch.dto.DispatchDto;
+import org.gislers.playgrounds.esb.consumer.ejb.dispatch.exception.DispatchMessageException;
+import org.gislers.playgrounds.esb.consumer.ejb.dispatch.service.EndpointLookupService;
 
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -22,22 +23,20 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 @Local
 @Stateless
-public class DispatchMessageEjb {
+public class DispatchMessageBean implements DispatchMessage {
 
-    private static final Logger logger = Logger.getLogger( DispatchMessageEjb.class.getName() );
+    @Inject
+    private Logger logger;
 
-    @EJB
-    private EndpointLookupEjb endpointLookupEjb;
+    @Inject
+    private EndpointLookupService endpointLookupService;
 
-    @EJB
-    private DispatchMessageEjb dispatchMessageEjb;
+    public void dispatchMessage(DispatchDto dispatchDto) {
 
-    public void dispatchMessage(DispatchServiceDto dispatchServiceDto) {
-
-        String endpoint = endpointLookupEjb.lookupEndpoint(dispatchServiceDto);
+        String endpoint = endpointLookupService.lookupEndpoint(dispatchDto);
         if( isBlank(endpoint) ) {
-            logger.warning("Endpoint not found: " + dispatchServiceDto.toString());
-            throw new EsbConsumerException("Endpoint not configured: " + dispatchServiceDto.toString());
+            logger.warning("Endpoint not found: " + dispatchDto.toString());
+            throw new DispatchMessageException("Endpoint not configured: " + dispatchDto.toString());
         }
         else {
             Client client = null;
@@ -46,11 +45,11 @@ public class DispatchMessageEjb {
                 client = ClientBuilder.newClient();
                 response = client.target(endpoint)
                         .request()
-                        .header(MessageConstants.TRANSACTION_ID, dispatchServiceDto.getTxId())
-                        .post(Entity.entity(dispatchServiceDto.getPayload(), MediaType.APPLICATION_JSON_TYPE), Response.class);
+                        .header(MessageConstants.TRANSACTION_ID, dispatchDto.getTxId())
+                        .post(Entity.entity(dispatchDto.getPayload(), MediaType.APPLICATION_JSON_TYPE), Response.class);
 
                 if (response != null && !isSuccess(response)) {
-                    logger.info(dispatchServiceDto.getPayload() + " - " + response.toString());
+                    logger.info(dispatchDto.getPayload() + " - " + response.toString());
                 }
             }
             finally {

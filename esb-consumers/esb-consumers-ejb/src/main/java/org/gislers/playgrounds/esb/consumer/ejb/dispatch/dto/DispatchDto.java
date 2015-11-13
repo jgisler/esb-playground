@@ -1,4 +1,4 @@
-package org.gislers.playgrounds.esb.consumer.dto;
+package org.gislers.playgrounds.esb.consumer.ejb.dispatch.dto;
 
 import org.gislers.playgrounds.esb.common.message.ClientName;
 import org.gislers.playgrounds.esb.common.message.ServiceName;
@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by:   jgisle
  * Created date: 10/15/15
  */
-public class DispatchServiceDto implements Serializable {
+public class DispatchDto implements Serializable {
 
     private ServiceName serviceName;
     private ClientName clientName;
@@ -18,7 +18,7 @@ public class DispatchServiceDto implements Serializable {
     private String txId;
     private String payload;
 
-    private DispatchServiceDto() {
+    private DispatchDto() {
     }
 
     public ServiceName getServiceName() {
@@ -47,7 +47,7 @@ public class DispatchServiceDto implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("DispatchServiceDto{");
+        final StringBuilder sb = new StringBuilder("DispatchDto{");
         sb.append("serviceName=").append(serviceName);
         sb.append(", clientName=").append(clientName);
         sb.append(", environmentName='").append(environmentName).append('\'');
@@ -99,15 +99,15 @@ public class DispatchServiceDto implements Serializable {
             return this;
         }
 
-        public DispatchServiceDto build() {
-            DispatchServiceDto dispatchServiceDto = new DispatchServiceDto();
-            dispatchServiceDto.clientName = this.clientName;
-            dispatchServiceDto.environmentName = this.environmentName;
-            dispatchServiceDto.messageVersion = this.messageVersion;
-            dispatchServiceDto.payload = this.payload;
-            dispatchServiceDto.serviceName = this.serviceName;
-            dispatchServiceDto.txId = this.txId;
-            return dispatchServiceDto;
+        public DispatchDto build() {
+            DispatchDto dispatchDto = new DispatchDto();
+            dispatchDto.clientName = this.clientName;
+            dispatchDto.environmentName = this.environmentName;
+            dispatchDto.messageVersion = this.messageVersion;
+            dispatchDto.payload = this.payload;
+            dispatchDto.serviceName = this.serviceName;
+            dispatchDto.txId = this.txId;
+            return dispatchDto;
         }
     }
 }

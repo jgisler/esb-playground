@@ -18,6 +18,7 @@
     <modules>
         <module>esb-gateway-web</module>
         <module>esb-gateway-ear</module>
+        <module>esb-gateway-ejb</module>
     </modules>
 
     <properties>
@@ -31,6 +32,13 @@
                 <artifactId>esb-gateway-web</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.gislers.playgrounds.esb</groupId>
+                <artifactId>esb-gateway-ejb</artifactId>
+                <version>${project.version}</version>
+                <type>ejb</type>
             </dependency>
 
             <!-- JSON serializer -->

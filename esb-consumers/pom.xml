@@ -18,6 +18,7 @@
     <modules>
         <module>esb-consumers-mdb</module>
         <module>esb-consumers-ear</module>
+        <module>esb-consumers-ejb</module>
     </modules>
 
     <properties>
@@ -31,6 +32,14 @@
             <dependency>
                 <groupId>org.gislers.playgrounds.esb</groupId>
                 <artifactId>esb-consumers-mdb</artifactId>
+                <version>${project.version}</version>
+                <type>ejb</type>
+            </dependency>
+
+            <!--EJB module-->
+            <dependency>
+                <groupId>org.gislers.playgrounds.esb</groupId>
+                <artifactId>esb-consumers-ejb</artifactId>
                 <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
