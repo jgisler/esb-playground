@@ -33,6 +33,7 @@
 
         <!--Plugin versions-->
         <maven.compiler.plugin.version>3.3</maven.compiler.plugin.version>
+        <maven.resources.plugin.version>2.7</maven.resources.plugin.version>
         <maven.ear.plugin.version>2.10.1</maven.ear.plugin.version>
         <maven.war.plugin.version>2.6</maven.war.plugin.version>
         <maven.ejb.plugin.version>2.5.1</maven.ejb.plugin.version>
@@ -65,6 +66,12 @@
                         <target>${java.version}</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven.resources.plugin.version}</version>
                 </plugin>
 
                 <plugin>
@@ -306,12 +313,14 @@
                     <plugin>
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
+                        <version>${wildfly.maven.plugin.version}</version>
                         <inherited>false</inherited>
                         <configuration>
+                            <skip>false</skip>
                             <execute-commands>
                                 <batch>false</batch>
                                 <scripts>
-                                    <script>${basedir}/src/main/resources/wildfly/add-resources.cli</script>
+                                    <script>${build.directory}/wildfly/add-resources.cli</script>
                                 </scripts>
                             </execute-commands>
                         </configuration>
